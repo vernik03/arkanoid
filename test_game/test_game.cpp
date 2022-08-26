@@ -8,6 +8,35 @@
 #include <regex>
 #include <sstream>
 #include "Framework.h"
+#include "Text.h"
+#include "Tile.h"
+
+class TileManager
+{
+public:
+	TileManager() {
+		for (int i = 0; i <= 3; i++)
+		{
+			for (int j = 0; j < 4; j++)
+			{
+				Tile* temp_tile = new Tile(TileType::intact, int(rand() % 9 + 1));
+				temp_tile->SetXY(i * temp_tile->getWidth(), j * temp_tile->getHeight());
+				tiles.push_back(temp_tile);
+			}			
+		}
+	};
+	~TileManager(){};
+
+	void drawAll() {
+		for (auto& tile : tiles)
+		{
+			tile->draw();
+		}
+	}
+
+private:
+	std::vector <Tile*> tiles;
+};
 
 /* Test Framework realization */
 class MyFramework : public Framework {
@@ -25,6 +54,8 @@ public:
 
 	virtual bool Init() {
 
+		text = std::make_unique<Text>();
+		tile_m = std::make_unique<TileManager>();
 		return true;
 	}
 
@@ -34,6 +65,8 @@ public:
 
 	virtual bool Tick() {
 		drawTestBackground();
+		tile_m->drawAll();
+		//text->print("Hello world!", 300, 300, Size::medium, Align::center, VAlign::center);
 		return false;
 	}
 
@@ -60,6 +93,9 @@ private:
 	int input_width;
 	int input_height;
 	bool input_fullscreen;
+	
+	std::unique_ptr<Text> text;
+	std::unique_ptr<TileManager> tile_m;
 };
 
 int main(int argc, char* argv[])

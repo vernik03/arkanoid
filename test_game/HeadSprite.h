@@ -13,7 +13,7 @@ public:
 	}
 
 	void draw() {
-		drawSprite(sprite, x, y);
+		drawSprite(sprite, x - width / 2, y - height / 2);
 	}
 
 	int getWidth() {

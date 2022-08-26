@@ -20,7 +20,7 @@ public:
 			for (int j = 0; j < 4; j++)
 			{
 				Tile* temp_tile = new Tile(TileType::intact, int(rand() % 9 + 1));
-				temp_tile->SetXY(i * temp_tile->getWidth(), j * temp_tile->getHeight());
+				temp_tile->SetXY(i * temp_tile->getWidth() + temp_tile->getWidth() / 2, j * temp_tile->getHeight() + temp_tile->getHeight() / 2);
 				temp_tile->setSize(temp_tile->getWidth() / 2, temp_tile->getHeight() / 2);\
 				tiles.push_back(temp_tile);
 			}			
@@ -57,6 +57,7 @@ public:
 
 		text = std::make_unique<Text>();
 		tile_m = std::make_unique<TileManager>();
+		reticle = std::make_unique<HeadSprite>("data/reticle.png");
 		return true;
 	}
 
@@ -65,14 +66,17 @@ public:
 	}
 
 	virtual bool Tick() {
+		showCursor(false);
+		
 		drawTestBackground();
 		tile_m->drawAll();
+		reticle->draw();
 		//text->print("Hello world!", 300, 300, Size::medium, Align::center, VAlign::center);
 		return false;
 	}
 
 	virtual void onMouseMove(int x, int y, int xrelative, int yrelative) {
-
+		reticle->SetXY(x, y);
 	}
 
 	virtual void onMouseButtonClick(FRMouseButton button, bool isReleased) {
@@ -97,6 +101,7 @@ private:
 	
 	std::unique_ptr<Text> text;
 	std::unique_ptr<TileManager> tile_m;
+	std::unique_ptr<HeadSprite> reticle;
 };
 
 int main(int argc, char* argv[])

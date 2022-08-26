@@ -48,6 +48,10 @@ public:
 		return height;
 	}
 
+	void setSize(int w, int h) {
+		//setSpriteSize(sprite, w, h);
+	}
+
 	double getX() {
 		return x;
 	}

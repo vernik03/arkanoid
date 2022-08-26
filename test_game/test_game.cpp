@@ -21,6 +21,7 @@ public:
 			{
 				Tile* temp_tile = new Tile(TileType::intact, int(rand() % 9 + 1));
 				temp_tile->SetXY(i * temp_tile->getWidth(), j * temp_tile->getHeight());
+				temp_tile->setSize(temp_tile->getWidth() / 2, temp_tile->getHeight() / 2);\
 				tiles.push_back(temp_tile);
 			}			
 		}

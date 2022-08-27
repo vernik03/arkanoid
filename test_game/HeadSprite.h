@@ -25,7 +25,7 @@ public:
 	}
 
 	void setSize(int w, int h) {
-		//setSpriteSize(sprite, w, h); // O_o
+		setSpriteSize(sprite, w, h); // O_o
 	}
 
 	double getX() {

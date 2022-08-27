@@ -43,14 +43,16 @@ public:
 		setXY(new_x, new_y);
 	}
 
-	TileCollision checkColission() {
-		if (true)
+	TileCollision checkColission(double ball_x, double ball_y, double ball_radius) {
+		if (((y + height / 2 > ball_y - ball_radius) && (y - height / 2 < ball_y + ball_radius))
+				&& (x - width / 2 <= ball_x + ball_radius) && (x + width / 2 >= ball_x - ball_radius))			
 		{
-
+			return TileCollision::vertical;
 		}
-		else if (true)
+		else if (((x + width / 2 > ball_x - ball_radius) && (x - width / 2 > ball_x + ball_radius)) &&
+				((y + height / 2 < ball_y - ball_radius) && (y - height / 2 > ball_y + ball_radius)))
 		{
-
+			return TileCollision::horisontal;
 		}
 		else
 		{

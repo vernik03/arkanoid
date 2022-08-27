@@ -106,11 +106,14 @@ public:
 		return 0;
 	}
 
+	bool checkColission(Tile*& tile) {
+		return ball->checkColission(tile);
+	}
+
 	void shootBall(double aim_x, double aim_y) {
 		if (!is_in_game)
 		{
-			ball->shoot(aim_x, aim_y);
-			is_in_game = 1;
+			is_in_game = ball->shoot(aim_x, aim_y);
 		}
 	}
 

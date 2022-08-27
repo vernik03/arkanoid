@@ -36,6 +36,16 @@ public:
 		}
 	}
 
+
+	void checkColission(std::unique_ptr<Platform>& platform) {
+		for (auto tile : tiles)
+		{
+			if (platform->checkColission(tile))
+			{
+			}
+		}
+	}
+
 private:
 	std::vector <Tile*> tiles;
 };
@@ -48,6 +58,7 @@ public:
 		getSpriteSize(sprite, width, height);
 		setSize(getWidth() / 2, getHeight() / 2);
 	}
+
 
 private:
 
@@ -94,14 +105,21 @@ public:
 		showCursor(false);
 		
 		drawTestBackground();
+
+
+		tile_m->checkColission(platform);
+		
 		tile_m->drawAll();
-		reticle->draw();
-		platform->draw();
 		platform->moveBall();
+		
+
+		platform->draw();
 		if (platform->checkBall())
 		{
 			return true;
 		}
+
+		reticle->draw();
 		//text->print("Hello world!", 300, 300, Size::medium, Align::center, VAlign::center);
 		return false;
 	}

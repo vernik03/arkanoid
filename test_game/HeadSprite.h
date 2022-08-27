@@ -9,7 +9,7 @@ public:
 	HeadSprite(const char* path, double new_x = 0, double new_y = 0) {
 		sprite = createSprite(path);
 		getSpriteSize(sprite, width, height);
-		SetXY(new_x, new_y);
+		setXY(new_x, new_y);
 	}
 
 	void draw() {
@@ -37,15 +37,15 @@ public:
 		return y;
 	}
 
-	void SetX(double new_x) {
+	void setX(double new_x) {
 		x = new_x;
 	}
 
-	void SetY(double new_y) {
+	void setY(double new_y) {
 		y = new_y;
 	}
 
-	void SetXY(double new_x, double new_y) {
+	void setXY(double new_x, double new_y) {
 		x = new_x;
 		y = new_y;
 	}

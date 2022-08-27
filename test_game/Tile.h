@@ -9,6 +9,12 @@ enum class TileType {
 	icon
 };
 
+enum class TileCollision {
+	no,
+	vertical,
+	horisontal
+};
+
 enum class TileColor {
 	blue,
 	light_green,
@@ -28,13 +34,28 @@ public:
 	Tile(TileType type, TileColor color, double new_x = 0, double new_y = 0) {
 		sprite = createSprite(("data/tiles/" + str(type) + "/" + str(color) + ".png").c_str());
 		getSpriteSize(sprite, width, height);
-		SetXY(new_x, new_y);
+		setXY(new_x, new_y);
 	}
 
 	Tile(TileType type, int color, double new_x = 0, double new_y = 0) {
 		sprite = createSprite(("data/tiles/" + str(type) + "/" + std::to_string(color) + ".png").c_str());
 		getSpriteSize(sprite, width, height);
-		SetXY(new_x, new_y);
+		setXY(new_x, new_y);
+	}
+
+	TileCollision checkColission() {
+		if (true)
+		{
+
+		}
+		else if (true)
+		{
+
+		}
+		else
+		{
+			return TileCollision::no;
+		}
 	}
 
 protected:

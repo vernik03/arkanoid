@@ -3,6 +3,7 @@
 #include <string>
 #include "Framework.h"
 #include "HeadSprite.h"
+#include "Ball.h"
 
 enum class Condition {
 	simple,
@@ -32,14 +33,17 @@ public:
 		window_w = new_window_w;
 		window_h = new_window_h;
 		getSpriteSize(sprites_simple[1], width, height);		
-		SetXY(window_w / 2, window_h - height);
+		setXY(window_w / 2, window_h - height);
 		condition = Condition::simple;
 		timer = getTickCount();
+		is_in_game = 0;
+		ball = new Ball(x, y - height / 2);
 	}
 	~Platform() {};
 
 	void draw() {
 		getSpriteSize(sprites_simple[1], width, height);
+		ball->draw();
 		if (getTickCount() - timer > 50)
 		{
 			//rand_sprite = int(rand() % 3 + 1);
@@ -65,11 +69,17 @@ public:
 	}
 
 	void moveLeft() {
-		x -= speed;
+		if (x > getWidth() / 2)
+		{
+			x -= speed;
+		}
 	}
 
 	void moveRight() {
-		x += speed;
+		if (x < window_w - getWidth() / 2)
+		{
+			x += speed;
+		}
 	}
 
 	void setSize(Sprite*& temp_sprite, int w, int h) {
@@ -77,9 +87,38 @@ public:
 		setSpriteSize(temp_sprite, w/1.5, h/1.5); // O_o		
 	}
 
-private:
-	double speed = 20;
+	void moveBall() {
+		if (!is_in_game)
+		{
+			ball->setX(x);
+		}
+		else
+		{
+			ball->move(window_w, width, height, x, y);
+		}
+	}
 
+	bool checkBall() {
+		if (ball->getY() + ball->getHeight() / 2 >= window_h)
+		{
+			return 1;
+		}
+		return 0;
+	}
+
+	void shootBall(double aim_x, double aim_y) {
+		if (!is_in_game)
+		{
+			ball->shoot(aim_x, aim_y);
+			is_in_game = 1;
+		}
+	}
+
+private:
+	double speed = 40;
+	bool is_in_game;
+
+	Ball* ball;
 
 	unsigned int timer; 
 	//int rand_sprite;

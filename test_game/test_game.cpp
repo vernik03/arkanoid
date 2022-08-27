@@ -22,7 +22,7 @@ public:
 			{
 				Tile* temp_tile = new Tile(TileType::intact, int(rand() % 10 + 1));
 				temp_tile->setSize(temp_tile->getWidth() / 2, temp_tile->getHeight() / 2);
-				temp_tile->SetXY(i * temp_tile->getWidth() + temp_tile->getWidth() / 2, j * temp_tile->getHeight() + temp_tile->getHeight() / 2);				
+				temp_tile->setXY(i * temp_tile->getWidth() + temp_tile->getWidth() / 2, j * temp_tile->getHeight() + temp_tile->getHeight() / 2);				
 				tiles.push_back(temp_tile);
 			}			
 		}
@@ -43,8 +43,8 @@ private:
 class Reticle : public HeadSprite
 {
 public:
-	Reticle(const char* path) {
-		sprite = createSprite(path);
+	Reticle() {
+		sprite = createSprite("data/reticle.png");
 		getSpriteSize(sprite, width, height);
 		setSize(getWidth() / 2, getHeight() / 2);
 	}
@@ -82,7 +82,7 @@ public:
 		text = std::make_unique<Text>();
 		tile_m = std::make_unique<TileManager>();
 		platform = std::make_unique<Platform>(window_w, window_h);		
-		reticle = std::make_unique<Reticle>("data/reticle.png");
+		reticle = std::make_unique<Reticle>();
 		return true;
 	}
 
@@ -97,16 +97,34 @@ public:
 		tile_m->drawAll();
 		reticle->draw();
 		platform->draw();
+		platform->moveBall();
+		if (platform->checkBall())
+		{
+			return true;
+		}
 		//text->print("Hello world!", 300, 300, Size::medium, Align::center, VAlign::center);
 		return false;
 	}
 
 	virtual void onMouseMove(int x, int y, int xrelative, int yrelative) {
-		reticle->SetXY(x, y);
+		reticle->setXY(x, y);
 	}
 
 	virtual void onMouseButtonClick(FRMouseButton button, bool isReleased) {
-
+		switch (button)
+		{
+		case FRMouseButton::LEFT:
+			platform->shootBall(reticle->getX(), reticle->getY());
+			break;
+		case FRMouseButton::MIDDLE:
+			break;
+		case FRMouseButton::RIGHT:
+			break;
+		case FRMouseButton::COUNT:
+			break;
+		default:
+			break;
+		}
 	}
 
 	virtual void onKeyPressed(FRKey k) {

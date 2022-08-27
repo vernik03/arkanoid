@@ -21,6 +21,9 @@ public:
 		x_speed = 0;
 		y_speed = 0;
 		speed = 4;
+
+		x_delay = 0;
+		y_delay = 0;
 	};
 
 	void draw() {
@@ -28,19 +31,29 @@ public:
 	}
 
 	void move(int window_w, int w, int h, int p_x, int p_y) {
+		const int SAFE_ZONE = 5;
 		if ((x - radius < 0) ||
 			(x + radius > window_w)
-			|| (((x + radius > p_x - w / 2) && (x - radius > p_x + w / 2)) &&
-			((y + radius < p_y - h / 2) && (y - radius > p_y + h / 2))))
+			||
+			(((x + radius > p_x - w / 2) && (x - radius < p_x + w / 2))
+				&& (y - radius <= p_y + h / 2 - SAFE_ZONE) && (y + radius >= p_y - h / 2 + SAFE_ZONE)))
 		{
-			x_speed *= -1;
+			if (!x_delay)
+			{
+				x_speed *= -1;
+			}
+			x_delay -= x_delay;
 		}
 
-		if ((y - height / 2 < 0) ||
+		if ((y - radius < 0) ||
 			(((y + radius > p_y - h / 2) && (y - radius < p_y + h / 2))
-				&& (x - radius <= p_x + w / 2) && (x + radius >= p_x - w / 2)))
+				&& (x - radius <= p_x + w / 2 - SAFE_ZONE) && (x + radius >= p_x - w / 2 + SAFE_ZONE)))
 		{
-			y_speed *= -1;
+			if (!y_delay)
+			{
+				y_speed *= -1;
+			}
+			y_delay -= y_delay;
 		}
 
 		x += x_speed;
@@ -84,6 +97,9 @@ private:
 	int speed;
 
 	double radius;
+
+	bool x_delay;
+	bool y_delay;
 
 	std::map<int, Sprite*> sprites_ball;
 	int current_ball;

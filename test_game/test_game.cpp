@@ -10,6 +10,7 @@
 #include "Framework.h"
 #include "Text.h"
 #include "Tile.h"
+#include "Platform.h"
 
 class TileManager
 {
@@ -19,7 +20,7 @@ public:
 		{
 			for (int j = 0; j < 4; j++)
 			{
-				Tile* temp_tile = new Tile(TileType::intact, int(rand() % 9 + 1));
+				Tile* temp_tile = new Tile(TileType::intact, int(rand() % 10 + 1));
 				temp_tile->SetXY(i * temp_tile->getWidth() + temp_tile->getWidth() / 2, j * temp_tile->getHeight() + temp_tile->getHeight() / 2);
 				temp_tile->setSize(temp_tile->getWidth() / 2, temp_tile->getHeight() / 2);\
 				tiles.push_back(temp_tile);
@@ -51,12 +52,23 @@ public:
 		width = input_width;
 		height = input_height;
 		fullscreen = input_fullscreen;
+		if (fullscreen)
+		{
+			window_w = 1920;
+			window_h = 1080;
+		}
+		else
+		{
+			window_w = input_width;
+			window_h = input_height;
+		}
 	}
 
 	virtual bool Init() {
 
 		text = std::make_unique<Text>();
 		tile_m = std::make_unique<TileManager>();
+		platform = std::make_unique<Platform>(window_w, window_h);
 		reticle = std::make_unique<HeadSprite>("data/reticle.png");
 		return true;
 	}
@@ -71,6 +83,7 @@ public:
 		drawTestBackground();
 		tile_m->drawAll();
 		reticle->draw();
+		platform->draw();
 		//text->print("Hello world!", 300, 300, Size::medium, Align::center, VAlign::center);
 		return false;
 	}
@@ -84,9 +97,42 @@ public:
 	}
 
 	virtual void onKeyPressed(FRKey k) {
+		switch (k)
+		{
+		case FRKey::RIGHT:
+			platform->moveRight();
+			break;
+		case FRKey::LEFT:
+			platform->moveLeft();
+			break;
+		case FRKey::DOWN:
+			break;
+		case FRKey::UP:
+			break;
+		case FRKey::COUNT:
+			break;
+		default:
+			break;
+		}
+		
 	}
 
 	virtual void onKeyReleased(FRKey k) {
+		switch (k)
+		{
+		case FRKey::RIGHT:
+			break;
+		case FRKey::LEFT:
+			break;
+		case FRKey::DOWN:
+			break;
+		case FRKey::UP:
+			break;
+		case FRKey::COUNT:
+			break;
+		default:
+			break;
+		}
 	}
 
 	virtual const char* GetTitle() override
@@ -98,10 +144,14 @@ private:
 	int input_width;
 	int input_height;
 	bool input_fullscreen;
+
+	int window_w;
+	int window_h;
 	
 	std::unique_ptr<Text> text;
 	std::unique_ptr<TileManager> tile_m;
 	std::unique_ptr<HeadSprite> reticle;
+	std::unique_ptr<Platform> platform;
 };
 
 int main(int argc, char* argv[])

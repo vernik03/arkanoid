@@ -18,16 +18,20 @@ public:
 		for (int i = 1; i <= 3; i++)
 		{
 			sprites_simple[i] = createSprite(("data/platform/simple/" + std::to_string(i) + ".png").c_str());
+			setSize(sprites_simple[i], getWidth() / 2, getHeight() / 2);
 		}
 		for (int i = 1; i <= 3; i++)
 		{
 			sprites_shoot[i] = createSprite(("data/platform/shoot/" + std::to_string(i) + ".png").c_str());
+			setSize(sprites_simple[i], getWidth() / 2, getHeight() / 2);
 		}
 		sprite_big = createSprite("data/platform/big.png");
+		setSize(sprite_big, getWidth() / 2, getHeight() / 2);
 		sprite_small = createSprite("data/platform/small.png");
+		setSize(sprite_small, getWidth() / 2, getHeight() / 2);
 		window_w = new_window_w;
 		window_h = new_window_h;
-		getSpriteSize(sprites_simple[1], width, height);
+		getSpriteSize(sprites_simple[1], width, height);		
 		SetXY(window_w / 2, window_h - height);
 		condition = Condition::simple;
 		timer = getTickCount();
@@ -66,6 +70,11 @@ public:
 
 	void moveRight() {
 		x += speed;
+	}
+
+	void setSize(Sprite*& temp_sprite, int w, int h) {
+		getSpriteSize(temp_sprite, w, h);
+		setSpriteSize(temp_sprite, w/1.5, h/1.5); // O_o		
 	}
 
 private:

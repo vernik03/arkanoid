@@ -21,8 +21,8 @@ public:
 			for (int j = 0; j < 4; j++)
 			{
 				Tile* temp_tile = new Tile(TileType::intact, int(rand() % 10 + 1));
-				temp_tile->SetXY(i * temp_tile->getWidth() + temp_tile->getWidth() / 2, j * temp_tile->getHeight() + temp_tile->getHeight() / 2);
-				temp_tile->setSize(temp_tile->getWidth() / 2, temp_tile->getHeight() / 2);\
+				temp_tile->setSize(temp_tile->getWidth() / 2, temp_tile->getHeight() / 2);
+				temp_tile->SetXY(i * temp_tile->getWidth() + temp_tile->getWidth() / 2, j * temp_tile->getHeight() + temp_tile->getHeight() / 2);				
 				tiles.push_back(temp_tile);
 			}			
 		}
@@ -38,6 +38,19 @@ public:
 
 private:
 	std::vector <Tile*> tiles;
+};
+
+class Reticle : public HeadSprite
+{
+public:
+	Reticle(const char* path) {
+		sprite = createSprite(path);
+		getSpriteSize(sprite, width, height);
+		setSize(getWidth() / 2, getHeight() / 2);
+	}
+
+private:
+
 };
 
 /* Test Framework realization */
@@ -68,8 +81,8 @@ public:
 
 		text = std::make_unique<Text>();
 		tile_m = std::make_unique<TileManager>();
-		platform = std::make_unique<Platform>(window_w, window_h);
-		reticle = std::make_unique<HeadSprite>("data/reticle.png");
+		platform = std::make_unique<Platform>(window_w, window_h);		
+		reticle = std::make_unique<Reticle>("data/reticle.png");
 		return true;
 	}
 
@@ -150,7 +163,7 @@ private:
 	
 	std::unique_ptr<Text> text;
 	std::unique_ptr<TileManager> tile_m;
-	std::unique_ptr<HeadSprite> reticle;
+	std::unique_ptr<Reticle> reticle;
 	std::unique_ptr<Platform> platform;
 };
 

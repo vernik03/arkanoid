@@ -68,23 +68,39 @@ public:
 		}
 	}
 
-	void moveLeft() {
-		if (x > getWidth() / 2)
+	void move() {
+		
+		x += right_speed;
+		x += left_speed;
+		if (x < getWidth() / 2)
 		{
-			x -= speed;
+			stopLeft();
+		}
+		if (x > window_w - getWidth() / 2)
+		{
+			stopRight();
 		}
 	}
 
+	void moveLeft() {
+		left_speed = -c_speed;
+	}
+
 	void moveRight() {
-		if (x < window_w - getWidth() / 2)
-		{
-			x += speed;
-		}
+		right_speed = c_speed;
 	}
 
 	void setSize(Sprite*& temp_sprite, int w, int h) {
 		getSpriteSize(temp_sprite, w, h);
 		setSpriteSize(temp_sprite, w/1.5, h/1.5); // O_o		
+	}
+
+	void stopLeft() {
+		left_speed = 0;
+	}
+
+	void stopRight() {
+		right_speed = 0;
 	}
 
 	void moveBall() {
@@ -118,7 +134,9 @@ public:
 	}
 
 private:
-	double speed = 40;
+	const int c_speed = 3;
+	double right_speed;
+	double left_speed;
 	bool is_in_game;
 
 	Ball* ball;

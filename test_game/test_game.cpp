@@ -113,6 +113,7 @@ public:
 		
 		tile_m->drawAll();
 		platform->moveBall();
+		platform->move();
 		
 
 		platform->draw();
@@ -172,8 +173,10 @@ public:
 		switch (k)
 		{
 		case FRKey::RIGHT:
+			platform->stopRight();
 			break;
 		case FRKey::LEFT:
+			platform->stopLeft();
 			break;
 		case FRKey::DOWN:
 			break;

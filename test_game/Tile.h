@@ -5,8 +5,7 @@
 
 enum class TileType {
 	intact,
-	broken,
-	icon
+	broken
 };
 
 enum class TileCollision {
@@ -32,40 +31,34 @@ enum class TileColor {
 class Tile : public HeadSprite
 {
 public:
-	Tile(TileType type, TileColor color, double new_x = 0, double new_y = 0) {
-		sprite = createSprite(("data/tiles/" + str(type) + "/" + str(color) + ".png").c_str());
-		getSpriteSize(sprite, width, height);
+	Tile(TileColor color, double new_x = 0, double new_y = 0) {
+		tile_sprites[TileType::broken] = createSprite(("data/tiles/" + str(TileType::broken) + "/" + str(color) + ".png").c_str());
+		tile_sprites[TileType::intact] = createSprite(("data/tiles/" + str(TileType::intact) + "/" + str(color) + ".png").c_str());
+		getSpriteSize(tile_sprites[TileType::intact], width, height);
 		setXY(new_x, new_y);
+		is_broken = 0;
+		is_enable = 1;
 	}
 
-	Tile(TileType type, int color, double new_x = 0, double new_y = 0) {
-		sprite = createSprite(("data/tiles/" + str(type) + "/" + std::to_string(color) + ".png").c_str());
-		getSpriteSize(sprite, width, height);
+	Tile(int color, double new_x = 0, double new_y = 0) {
+		tile_sprites[TileType::broken] = createSprite(("data/tiles/" + str(TileType::broken) + "/" + std::to_string(color) + ".png").c_str());
+		tile_sprites[TileType::intact] = createSprite(("data/tiles/" + str(TileType::intact) + "/" + std::to_string(color) + ".png").c_str());
+		getSpriteSize(tile_sprites[TileType::intact], width, height);
 		setXY(new_x, new_y);
+		is_broken = 0;
+		is_enable = 1;
 	}
 
 	TileCollision checkColission(double ball_x, double ball_y, double ball_radius) {
-		const int SAFE_ZONE = 5;
-		/*	if (((y + height / 2 > ball_y - ball_radius) && (y - height / 2 < ball_y + ball_radius))
-				&& (x - width / 2 <= ball_x + ball_radius) && (x + width / 2 >= ball_x - ball_radius))
-			{
-				return TileCollision::vertical;
-			}
-			else if (((x + width / 2 > ball_x - ball_radius) && (x - width / 2 > ball_x + ball_radius)) &&
-				((y + height / 2 < ball_y - ball_radius) && (y - height / 2 > ball_y + ball_radius)))
-			{
-				return TileCollision::horisontal;
-			}
-			else
-			{
-				return TileCollision::no;
-			}*/
-
+		if (is_broken > 0 || !is_enable)
+		{
+			return TileCollision::no;
+		}
+		const double SAFE_ZONE = 3;
 		TileCollision result = TileCollision::no;
 		if (((x + width / 2 > ball_x - ball_radius) && (x - width / 2 < ball_x + ball_radius))
 			&& (y - height / 2 <= ball_y + ball_radius - SAFE_ZONE) && (y + height / 2 >= ball_y - ball_radius + SAFE_ZONE))
 		{
-
 			result = TileCollision::horisontal;
 		}
 		if (((y + height / 2 > ball_y - ball_radius) && (y - height / 2 < ball_y + ball_radius))
@@ -80,12 +73,51 @@ public:
 				result = TileCollision::vertical;
 			}
 		}
+		if (result != TileCollision::no)
+		{
+			is_broken++;
+		}
 		return result;
+	}
+
+	void draw() {
+		getSpriteSize(tile_sprites[TileType::intact], width, height);
+
+		const int broken_maximum = 20;
+		if (is_broken >= broken_maximum && is_enable)
+		{
+			is_enable = 0;
+		}
+		if (is_broken > 0 && is_broken < broken_maximum)
+		{
+			drawSprite(tile_sprites[TileType::broken], x - width / 2, y - height / 2);
+			is_broken++;
+		}
+		else if(is_enable)
+		{
+			drawSprite(tile_sprites[TileType::intact], x - width / 2, y - height / 2);
+		}
+		
+	}
+
+
+	void setSize(int w, int h) {
+		setSpriteSize(tile_sprites[TileType::broken], w, h);	
+		setSpriteSize(tile_sprites[TileType::intact], w, h);
+		width = w;
+		height = h;
+
 	}
 
 protected:
 	std::string str(TileType type);
 	std::string str(TileColor color);
+
+	std::map<TileType, Sprite*> tile_sprites;
+
+	int is_broken;
+	bool is_enable;
+	
 };
 
 
@@ -96,8 +128,6 @@ std::string Tile::str(TileType type) {
 		return "intact";
 	case TileType::broken:
 		return "broken";
-	case TileType::icon:
-		return "icons";
 	default:
 		return "";
 	}

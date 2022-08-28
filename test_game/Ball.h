@@ -7,7 +7,7 @@ class Ball : public HeadSprite
 {
 public:
 	Ball(double platform_x, double platform_y){
-		current_ball = 4;
+		current_ball = 2;
 		for (int i = 1; i <= 4; i++)
 		{
 			sprites_ball[i] = createSprite(("data/platform/bullet/" + std::to_string(i) + ".png").c_str());
@@ -30,8 +30,8 @@ public:
 		drawSprite(sprites_ball[current_ball], x - width / 2, y - height / 2);
 	}
 
-	void move(int window_w, int w, int h, int p_x, int p_y) {
-		const int SAFE_ZONE = 5;
+	void move(int window_w, int w, int h, double p_x, double p_y) {
+		const double SAFE_ZONE = 3;
 		if ((x - radius < 0) ||
 			(x + radius > window_w)
 			||
@@ -110,6 +110,8 @@ public:
 			return 0;
 		}
 	}
+
+
 
 private:
 	double x_speed;

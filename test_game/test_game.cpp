@@ -20,7 +20,7 @@ public:
 		{
 			for (int j = 0; j < 4; j++)
 			{
-				Tile* temp_tile = new Tile(TileType::intact, int(rand() % 10 + 1));
+				Tile* temp_tile = new Tile(int(rand() % 10 + 1));
 				temp_tile->setSize(temp_tile->getWidth() / 2, temp_tile->getHeight() / 2);
 				temp_tile->setXY(i * temp_tile->getWidth() + temp_tile->getWidth() / 2, j * temp_tile->getHeight() + temp_tile->getHeight() / 2);				
 				tiles.push_back(temp_tile);
@@ -42,13 +42,9 @@ public:
 		{
 			if (platform->checkColission(tile))
 			{
-				std::cout << 1;
+				
 			}
-			else
-			{
-				std::cout << 0;
-
-			}
+			
 		}
 	}
 
@@ -62,7 +58,7 @@ public:
 	Reticle() {
 		sprite = createSprite("data/reticle.png");
 		getSpriteSize(sprite, width, height);
-		setSize(getWidth() / 2, getHeight() / 2);
+		setSize(getWidth() / 3, getHeight() / 3);
 	}
 
 

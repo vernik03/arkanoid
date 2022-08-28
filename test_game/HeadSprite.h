@@ -13,6 +13,7 @@ public:
 	}
 
 	void draw() {
+		getSpriteSize(sprite, width, height);
 		drawSprite(sprite, x - width / 2, y - height / 2);
 	}
 

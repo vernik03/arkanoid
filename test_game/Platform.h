@@ -38,6 +38,7 @@ public:
 		timer = getTickCount();
 		is_in_game = 0;
 		ball = new Ball(x, y - height / 2);
+		catch_delay = 0;
 	}
 	~Platform() {};
 
@@ -110,7 +111,11 @@ public:
 		}
 		else
 		{
-			ball->move(window_w, width, height, x, y);
+			
+			if (ball->move(window_w, width, height, x, y))
+			{
+				tryToCatch();
+			}
 		}
 	}
 
@@ -133,6 +138,23 @@ public:
 		}
 	}
 
+	void tryToCatch() {
+		int percent = rand() % 100;
+		if (percent < 15)
+		{
+			if (catch_delay == 0)
+			{
+				is_in_game = 0;
+				ball = new Ball(x, y - height / 2);
+			}
+			catch_delay ++;
+			if (catch_delay > 10)
+			{
+				catch_delay = 0;
+			}
+		}
+	}
+
 private:
 	const int c_speed = 3;
 	double right_speed;
@@ -146,6 +168,8 @@ private:
 	
 	int window_w;
 	int window_h;
+
+	int catch_delay;
 
 	Condition condition;
 	std::map<int, Sprite*> sprites_simple;

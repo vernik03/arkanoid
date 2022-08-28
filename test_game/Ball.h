@@ -28,8 +28,8 @@ public:
 		drawSprite(sprites_ball[current_ball], x - width / 2, y - height / 2);
 	}
 
-	void move(int window_w, int w, int h, double p_x, double p_y) {
-		const double SAFE_ZONE = 7;
+	bool move(int window_w, int w, int h, double p_x, double p_y) {
+		const double SAFE_ZONE = 5;
 		if ((x - radius < 0) ||
 			(x + radius > window_w)
 			||
@@ -56,6 +56,20 @@ public:
 
 		x += x_speed;
 		y += y_speed;
+
+		return checkCatch(w, h, p_x, p_y);
+	}
+
+	bool checkCatch(int w, int h, double p_x, double p_y) {
+		if ((((x + radius > p_x - w / 2) && (x - radius < p_x + w / 2))
+			&& (y - radius <= p_y + h / 2) && (y + radius >= p_y - h / 2))
+			||
+			(((y + radius > p_y - h / 2) && (y - radius < p_y + h / 2))
+				&& (x - radius <= p_x + w / 2) && (x + radius >= p_x - w / 2)))
+		{
+			return 1;
+		}
+		return 0;
 	}
 
 	bool shoot(double aim_x, double aim_y, int w) {
@@ -108,7 +122,6 @@ public:
 			return 0;
 		}
 	}
-
 
 
 private:

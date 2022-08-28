@@ -15,52 +15,67 @@
 class TileManager
 {
 public:
-	TileManager(int counter_w, int counter_h, int w) {
-		for (int i = 0; i < counter_h; i++)
+	TileManager(std::vector<std::vector <int>> map, int w) {
+		
+		for (int i = 0; i < map.size(); i++)
 		{
-			for (int j = 0; j < counter_w; j++)
+			std::vector <Tile*> temp_t;
+			for (int j = 0; j < map[i].size(); j++)
 			{
-				Tile* temp_tile = new Tile(int(rand() % 10 + 1));
-				temp_tile->setSize(w / counter_w, (w / counter_w)/3);
-				temp_tile->setXY(j * temp_tile->getWidth() + temp_tile->getWidth() / 2, i * temp_tile->getHeight() + temp_tile->getHeight() / 2);				
-				tiles.push_back(temp_tile);
-			}			
+				if (map[i][j] != 0)
+				{
+					Tile* temp_tile = new Tile(map[i][j]);
+					temp_tile->setSize(w / map[i].size(), (w / map[i].size()) / 3);
+					temp_tile->setXY(j * temp_tile->getWidth() + temp_tile->getWidth() / 2, i * temp_tile->getHeight() + temp_tile->getHeight() / 2);
+					temp_t.push_back(temp_tile);
+				}
+			}	
+			tiles.push_back(temp_t);
 		}
 	};
 	~TileManager(){};
 
 	void drawAll() {
-		for (auto& tile : tiles)
+		for (auto& tile_line : tiles)
 		{
-			tile->draw();
+			for (auto& tile : tile_line)
+			{
+				tile->draw();
+			}
 		}
 	}
 
 
 	bool checkColission(std::unique_ptr<Platform>& platform) {
-		for (auto tile : tiles)
+		for (auto& tile_line : tiles)
 		{
-			if (platform->checkColission(tile))
+			for (auto& tile : tile_line)
 			{
-				return 1;
-			}			
+				if (platform->checkColission(tile))
+				{
+					return 1;
+				}
+			}
 		}
 		return 0;
 	}
 
 	bool checkVictory() {
-		for (auto tile : tiles)
+		for (auto& tile_line : tiles)
 		{
-			if (!tile->isBroken())
+			for (auto& tile : tile_line)
 			{
-				return 0;
+				if (!tile->isBroken())
+				{
+					return 0;
+				}
 			}
 		}
 		return 1;
 	}
 
 private:
-	std::vector <Tile*> tiles;
+	std::vector<std::vector <Tile*>> tiles;
 };
 
 class Background : public HeadSprite
@@ -106,10 +121,36 @@ private:
 class Map
 {
 public:
-	Map(int w, int h) {
+	Map(int w, int h, std::string path = "") {
 		counter_w = w / 192;
 		counter_h = (h - 300) / 64;
+		if (path == "")
+		{
+			createMap();
+		}
 	};
+
+	void createMap() {
+		for (int i = 0; i < counter_h; i++)
+		{
+			std::vector <int> temp;
+			for (int j = 0; j < counter_w; j++)
+			{
+				int t = rand() % 9 + 1;
+				int percent = rand() % 100;
+				if (percent < 30)
+				{
+					t = 0;
+				}
+				temp.push_back(t);
+			}
+			tiles.push_back(temp);
+		}
+	}
+
+	std::vector<std::vector <int>> getMap() {
+		return tiles;
+	}
 
 	int getCounterW() {
 		return counter_w;
@@ -124,7 +165,7 @@ private:
 	int counter_w;
 	int counter_h;
 
-
+	std::vector<std::vector <int>> tiles;
 };
 
 /* Test Framework realization */
@@ -158,7 +199,7 @@ public:
 		reticle = std::make_unique<Reticle>();
 		background = std::make_unique<Background>(window_w);
 		map = std::make_unique<Map>(window_w, window_h);
-		tile_m = std::make_unique<TileManager>(map->getCounterW(), map->getCounterH(), window_w);
+		tile_m = std::make_unique<TileManager>(map->getMap(), window_w);
 
 		score = 0;
 		timer = 0;

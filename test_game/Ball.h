@@ -29,7 +29,7 @@ public:
 	}
 
 	void move(int window_w, int w, int h, double p_x, double p_y) {
-		const double SAFE_ZONE = 10;
+		const double SAFE_ZONE = 7;
 		if ((x - radius < 0) ||
 			(x + radius > window_w)
 			||

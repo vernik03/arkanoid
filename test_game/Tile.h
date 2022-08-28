@@ -83,7 +83,7 @@ public:
 	void draw() {
 		getSpriteSize(tile_sprites[TileType::intact], width, height);
 
-		const int broken_maximum = 20;
+		const int broken_maximum = 70;
 		if (is_broken >= broken_maximum && is_enable)
 		{
 			is_enable = 0;

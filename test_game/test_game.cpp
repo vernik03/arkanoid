@@ -37,15 +37,26 @@ public:
 	}
 
 
-	void checkColission(std::unique_ptr<Platform>& platform) {
+	bool checkColission(std::unique_ptr<Platform>& platform) {
 		for (auto tile : tiles)
 		{
 			if (platform->checkColission(tile))
 			{
-				
-			}
-			
+				return 1;
+			}			
 		}
+		return 0;
+	}
+
+	bool checkVictory() {
+		for (auto tile : tiles)
+		{
+			if (!tile->isBroken())
+			{
+				return 0;
+			}
+		}
+		return 1;
 	}
 
 private:
@@ -96,6 +107,10 @@ public:
 		tile_m = std::make_unique<TileManager>();
 		platform = std::make_unique<Platform>(window_w, window_h);		
 		reticle = std::make_unique<Reticle>();
+
+		score = 0;
+		timer = 0;
+		is_winner = 0;
 		return true;
 	}
 
@@ -104,26 +119,54 @@ public:
 	}
 
 	virtual bool Tick() {
-		showCursor(false);
-		
-		drawTestBackground();
 
-
-		tile_m->checkColission(platform);
 		
-		tile_m->drawAll();
-		platform->moveBall();
-		platform->move();
-		
-
-		platform->draw();
-		if (platform->checkBall())
+		if (getTickCount() - timer > 1500 && timer > 0)
 		{
 			return true;
 		}
+		
+		showCursor(false);
+		
+		drawTestBackground();
+		score += tile_m->checkColission(platform);
+		tile_m->drawAll();
+		if (timer == 0)
+		{
+			platform->moveBall();
+			platform->move();
+		}
+		else if (is_winner)
+		{
+			text->print("YOU WON!", window_w / 2, window_h / 2, Size::medium, Align::center, VAlign::center);
+		}
+		else
+		{
+			platform->moveBall();
+			text->print("GAME OVER!", window_w / 2, window_h / 2, Size::medium, Align::center, VAlign::center);
+		}
+		
+		
+
+		platform->draw();
+		if (timer == 0)
+		{
+			if (platform->checkBall())
+			{
+				timer = getTickCount();
+			}
+			if (tile_m->checkVictory())
+			{
+				timer = getTickCount();
+				is_winner = 1;
+			}
+		}
+		
+
+		text->print(std::to_string(score), platform->getX(), platform->getY() + 2, Size::small, Align::center, VAlign::top);
 
 		reticle->draw();
-		//text->print("Hello world!", 300, 300, Size::medium, Align::center, VAlign::center);
+		
 		return false;
 	}
 
@@ -201,6 +244,12 @@ private:
 
 	int window_w;
 	int window_h;
+
+	unsigned int timer;
+
+	bool is_winner;
+
+	int score;
 	
 	std::unique_ptr<Text> text;
 	std::unique_ptr<TileManager> tile_m;

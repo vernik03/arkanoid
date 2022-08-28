@@ -20,8 +20,6 @@ public:
 		}
 		x_speed = 0;
 		y_speed = 0;
-		speed = 4;
-
 		x_delay = 0;
 		y_delay = 0;
 	};
@@ -31,7 +29,7 @@ public:
 	}
 
 	void move(int window_w, int w, int h, double p_x, double p_y) {
-		const double SAFE_ZONE = 5;
+		const double SAFE_ZONE = 10;
 		if ((x - radius < 0) ||
 			(x + radius > window_w)
 			||
@@ -116,7 +114,7 @@ public:
 private:
 	double x_speed;
 	double y_speed;
-	int speed;
+	const int speed = 7;
 
 	double radius;
 

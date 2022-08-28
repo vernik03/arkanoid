@@ -54,7 +54,7 @@ public:
 		{
 			return TileCollision::no;
 		}
-		const double SAFE_ZONE = 3;
+		const double SAFE_ZONE = 5;
 		TileCollision result = TileCollision::no;
 		if (((x + width / 2 > ball_x - ball_radius) && (x - width / 2 < ball_x + ball_radius))
 			&& (y - height / 2 <= ball_y + ball_radius - SAFE_ZONE) && (y + height / 2 >= ball_y - ball_radius + SAFE_ZONE))
@@ -106,7 +106,14 @@ public:
 		setSpriteSize(tile_sprites[TileType::intact], w, h);
 		width = w;
 		height = h;
+	}
 
+	bool isBroken() {
+		if (is_broken > 0 || !is_enable)
+		{
+			return true;
+		}
+		return false;
 	}
 
 protected:

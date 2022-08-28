@@ -58,8 +58,8 @@ public:
 		y += y_speed;
 	}
 
-	bool shoot(double aim_x, double aim_y) {
-		if (aim_y < y)
+	bool shoot(double aim_x, double aim_y, int w) {
+		if (aim_y < y && (aim_x < x - w / 6 || aim_x > x + w / 6))
 		{
 			x_speed = aim_x - x;
 			y_speed = aim_y - y;
@@ -114,7 +114,7 @@ public:
 private:
 	double x_speed;
 	double y_speed;
-	const int speed = 7;
+	const int speed = 2;
 
 	double radius;
 

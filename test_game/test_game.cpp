@@ -15,14 +15,14 @@
 class TileManager
 {
 public:
-	TileManager() {
-		for (int i = 0; i <= 3; i++)
+	TileManager(int counter_w, int counter_h, int w) {
+		for (int i = 0; i < counter_h; i++)
 		{
-			for (int j = 0; j < 4; j++)
+			for (int j = 0; j < counter_w; j++)
 			{
 				Tile* temp_tile = new Tile(int(rand() % 10 + 1));
-				temp_tile->setSize(temp_tile->getWidth() / 2, temp_tile->getHeight() / 2);
-				temp_tile->setXY(i * temp_tile->getWidth() + temp_tile->getWidth() / 2, j * temp_tile->getHeight() + temp_tile->getHeight() / 2);				
+				temp_tile->setSize(w / counter_w, (w / counter_w)/3);
+				temp_tile->setXY(j * temp_tile->getWidth() + temp_tile->getWidth() / 2, i * temp_tile->getHeight() + temp_tile->getHeight() / 2);				
 				tiles.push_back(temp_tile);
 			}			
 		}
@@ -63,6 +63,32 @@ private:
 	std::vector <Tile*> tiles;
 };
 
+class Background : public HeadSprite
+{
+public:
+	Background(int w) {
+		sprite = createSprite("data/background.png");
+		width = w / 4;
+		height = width;
+		setSize(width, height);
+	};
+
+	void draw(int h) {
+		int temp = h / height + 1;
+		for (int i = 0; i < 8; i++)
+		{
+			for (int j = 0; j < temp; j++)
+			{
+				drawSprite(sprite, width * i, height * j);
+			}
+		}
+	}
+
+private:
+
+};
+
+
 class Reticle : public HeadSprite
 {
 public:
@@ -74,6 +100,30 @@ public:
 
 
 private:
+
+};
+
+class Map
+{
+public:
+	Map(int w, int h) {
+		counter_w = w / 192;
+		counter_h = (h - 300) / 64;
+	};
+
+	int getCounterW() {
+		return counter_w;
+	}
+	
+	int getCounterH() {
+		return counter_h;
+	}
+	
+
+private:
+	int counter_w;
+	int counter_h;
+
 
 };
 
@@ -104,9 +154,11 @@ public:
 	virtual bool Init() {
 
 		text = std::make_unique<Text>();
-		tile_m = std::make_unique<TileManager>();
 		platform = std::make_unique<Platform>(window_w, window_h);		
 		reticle = std::make_unique<Reticle>();
+		background = std::make_unique<Background>(window_w);
+		map = std::make_unique<Map>(window_w, window_h);
+		tile_m = std::make_unique<TileManager>(map->getCounterW(), map->getCounterH(), window_w);
 
 		score = 0;
 		timer = 0;
@@ -128,7 +180,7 @@ public:
 		
 		showCursor(false);
 		
-		drawTestBackground();
+		background->draw(window_h);
 		score += tile_m->checkColission(platform);
 		tile_m->drawAll();
 		if (timer == 0)
@@ -255,6 +307,8 @@ private:
 	std::unique_ptr<TileManager> tile_m;
 	std::unique_ptr<Reticle> reticle;
 	std::unique_ptr<Platform> platform;
+	std::unique_ptr<Background> background;
+	std::unique_ptr<Map> map;
 };
 
 int main(int argc, char* argv[])

@@ -12,7 +12,8 @@ enum class TileType {
 enum class TileCollision {
 	no,
 	vertical,
-	horisontal
+	horisontal,
+	both
 };
 
 enum class TileColor {
@@ -44,20 +45,42 @@ public:
 	}
 
 	TileCollision checkColission(double ball_x, double ball_y, double ball_radius) {
-		if (((y + height / 2 > ball_y - ball_radius) && (y - height / 2 < ball_y + ball_radius))
-				&& (x - width / 2 <= ball_x + ball_radius) && (x + width / 2 >= ball_x - ball_radius))			
-		{
-			return TileCollision::vertical;
-		}
-		else if (((x + width / 2 > ball_x - ball_radius) && (x - width / 2 > ball_x + ball_radius)) &&
+		const int SAFE_ZONE = 5;
+		/*	if (((y + height / 2 > ball_y - ball_radius) && (y - height / 2 < ball_y + ball_radius))
+				&& (x - width / 2 <= ball_x + ball_radius) && (x + width / 2 >= ball_x - ball_radius))
+			{
+				return TileCollision::vertical;
+			}
+			else if (((x + width / 2 > ball_x - ball_radius) && (x - width / 2 > ball_x + ball_radius)) &&
 				((y + height / 2 < ball_y - ball_radius) && (y - height / 2 > ball_y + ball_radius)))
+			{
+				return TileCollision::horisontal;
+			}
+			else
+			{
+				return TileCollision::no;
+			}*/
+
+		TileCollision result = TileCollision::no;
+		if (((x + width / 2 > ball_x - ball_radius) && (x - width / 2 < ball_x + ball_radius))
+			&& (y - height / 2 <= ball_y + ball_radius - SAFE_ZONE) && (y + height / 2 >= ball_y - ball_radius + SAFE_ZONE))
 		{
-			return TileCollision::horisontal;
+
+			result = TileCollision::horisontal;
 		}
-		else
+		if (((y + height / 2 > ball_y - ball_radius) && (y - height / 2 < ball_y + ball_radius))
+			&& (x - width / 2 <= ball_x + ball_radius - SAFE_ZONE) && (x + width / 2 >= ball_x - ball_radius + SAFE_ZONE))
 		{
-			return TileCollision::no;
+			if (result == TileCollision::horisontal)
+			{
+				result = TileCollision::both;
+			}
+			else
+			{
+				result = TileCollision::vertical;
+			}
 		}
+		return result;
 	}
 
 protected:

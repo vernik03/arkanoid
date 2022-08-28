@@ -42,6 +42,12 @@ public:
 		{
 			if (platform->checkColission(tile))
 			{
+				std::cout << 1;
+			}
+			else
+			{
+				std::cout << 0;
+
 			}
 		}
 	}

@@ -81,10 +81,30 @@ public:
 		case TileCollision::no:
 			return 0;
 		case TileCollision::vertical:
-			y_speed *= -1;
+			if (!y_delay)
+			{
+				y_speed *= -1;
+			}
+			y_delay -= y_delay;
 			return 1;
 		case TileCollision::horisontal:
-			x_speed *= -1;
+			if (!x_delay)
+			{
+				x_speed *= -1;
+			}
+			x_delay -= x_delay;
+			return 1;
+		case TileCollision::both:
+			if (!x_delay)
+			{
+				x_speed *= -1;
+			}
+			x_delay -= x_delay;
+			if (!y_delay)
+			{
+				y_speed *= -1;
+			}
+			y_delay -= y_delay;
 			return 1;
 		default:
 			return 0;

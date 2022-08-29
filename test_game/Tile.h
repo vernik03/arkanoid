@@ -20,7 +20,7 @@ enum class TileColor {
 	light_green,
 	purple,
 	red,
-	Orange,
+	orange,
 	light_blue,
 	yellow,
 	green,
@@ -31,22 +31,33 @@ enum class TileColor {
 class Tile : public HeadSprite
 {
 public:
-	Tile(TileColor color, double new_x = 0, double new_y = 0) {
-		tile_sprites[TileType::broken] = createSprite(("data/tiles/" + str(TileType::broken) + "/" + str(color) + ".png").c_str());
-		tile_sprites[TileType::intact] = createSprite(("data/tiles/" + str(TileType::intact) + "/" + str(color) + ".png").c_str());
+	Tile(TileColor new_color, double new_x = 0, double new_y = 0) {
+		tile_sprites[TileType::broken] = createSprite(("data/tiles/" + str(TileType::broken) + "/" + std::to_string(static_cast<int>(new_color)+1) + ".png").c_str());
+		tile_sprites[TileType::intact] = createSprite(("data/tiles/" + str(TileType::intact) + "/" + std::to_string(static_cast<int>(new_color)+1) + ".png").c_str());
 		getSpriteSize(tile_sprites[TileType::intact], width, height);
 		setXY(new_x, new_y);
 		is_broken = 0;
 		is_enable = 1;
+		color = new_color;
 	}
 
-	Tile(int color, double new_x = 0, double new_y = 0) {
-		tile_sprites[TileType::broken] = createSprite(("data/tiles/" + str(TileType::broken) + "/" + std::to_string(color) + ".png").c_str());
-		tile_sprites[TileType::intact] = createSprite(("data/tiles/" + str(TileType::intact) + "/" + std::to_string(color) + ".png").c_str());
-		getSpriteSize(tile_sprites[TileType::intact], width, height);
-		setXY(new_x, new_y);
+	Tile(int new_color, double new_x = 0, double new_y = 0) {
 		is_broken = 0;
 		is_enable = 1;
+
+		if (new_color == 0)
+		{
+			is_broken = 1000;
+			is_enable = 0;
+			new_color = 1;
+		}
+		
+		tile_sprites[TileType::broken] = createSprite(("data/tiles/" + str(TileType::broken) + "/" + std::to_string(new_color) + ".png").c_str());
+		tile_sprites[TileType::intact] = createSprite(("data/tiles/" + str(TileType::intact) + "/" + std::to_string(new_color) + ".png").c_str());
+		getSpriteSize(tile_sprites[TileType::intact], width, height);
+		setXY(new_x, new_y);
+		color = static_cast<TileColor>(new_color-1);
+		
 	}
 
 	TileCollision checkColission(double ball_x, double ball_y, double ball_radius) {
@@ -79,6 +90,10 @@ public:
 		}
 		return result;
 	}
+	
+	void breakTile() {
+		is_broken++;
+	}
 
 	void draw() {
 		getSpriteSize(tile_sprites[TileType::intact], width, height);
@@ -100,6 +115,9 @@ public:
 		
 	}
 
+	TileColor getColor() {
+		return color;
+	}
 
 	void setSize(int w, int h) {
 		setSpriteSize(tile_sprites[TileType::broken], w, h);	
@@ -118,7 +136,8 @@ public:
 
 protected:
 	std::string str(TileType type);
-	std::string str(TileColor color);
+
+	TileColor color;
 
 	std::map<TileType, Sprite*> tile_sprites;
 
@@ -139,42 +158,3 @@ std::string Tile::str(TileType type) {
 		return "";
 	}
 }
-
-std::string Tile::str(TileColor color) {
-	switch (color)
-	{
-	case TileColor::blue:
-		return "1";
-		break;
-	case TileColor::light_green:
-		return "2";
-		break;
-	case TileColor::purple:
-		return "3";
-		break;
-	case TileColor::red:
-		return "4";
-		break;
-	case TileColor::Orange:
-		return "5";
-		break;
-	case TileColor::light_blue:
-		return "6";
-		break;
-	case TileColor::yellow:
-		return "7";
-		break;
-	case TileColor::green:
-		return "8";
-		break;
-	case TileColor::grey:
-		return "9";
-		break;
-	case TileColor::brown:
-		return "10";
-		break;
-	default:
-		break;
-	}
-}
-

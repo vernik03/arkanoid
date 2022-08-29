@@ -12,6 +12,46 @@
 #include "Tile.h"
 #include "Platform.h"
 
+struct Boom
+{
+	int start_tick;
+	double x;
+	double y;
+};
+
+class Explosion : public HeadSprite
+{
+public:
+	Explosion() {
+		for (int i = 1; i <= 7; i++)
+		{
+			explosion_sprites[i] = createSprite(("data/explosion/" + std::to_string(i) + ".png").c_str());
+		}
+		getSpriteSize(explosion_sprites[1], width, height);
+	};
+	
+	void boom(double x, double y){
+		explosion_info.push_back(Boom(getTickCount(), x, y));
+	}
+
+	void draw() {
+		for (auto boom : explosion_info)
+		{
+			int temp = getTickCount() - boom.start_tick;
+			if (temp >= 80 && temp <= 560)
+			{
+				
+				drawSprite(explosion_sprites[temp / 80], boom.x - width / 2, boom.y - height / 2);
+			}
+		}
+	}
+	
+private:
+
+	std::map<int, Sprite*> explosion_sprites;
+	std::vector<Boom> explosion_info;
+};
+
 class TileManager
 {
 public:
@@ -22,16 +62,14 @@ public:
 			std::vector <Tile*> temp_t;
 			for (int j = 0; j < map[i].size(); j++)
 			{
-				if (map[i][j] != 0)
-				{
-					Tile* temp_tile = new Tile(map[i][j]);
-					temp_tile->setSize(w / map[i].size(), (w / map[i].size()) / 3);
-					temp_tile->setXY(j * temp_tile->getWidth() + temp_tile->getWidth() / 2, i * temp_tile->getHeight() + temp_tile->getHeight() / 2);
-					temp_t.push_back(temp_tile);
-				}
+				Tile* temp_tile = new Tile(map[i][j]);
+				temp_tile->setSize(w / map[i].size(), (w / map[i].size()) / 3);
+				temp_tile->setXY(j * temp_tile->getWidth() + temp_tile->getWidth() / 2, i * temp_tile->getHeight() + temp_tile->getHeight() / 2);
+				temp_t.push_back(temp_tile);
 			}	
 			tiles.push_back(temp_t);
 		}
+		explosion = new Explosion();
 	};
 	~TileManager(){};
 
@@ -43,16 +81,58 @@ public:
 				tile->draw();
 			}
 		}
+		explosion->draw();
 	}
 
 
 	bool checkColission(std::unique_ptr<Platform>& platform) {
-		for (auto& tile_line : tiles)
+		for (int i = 0; i < tiles.size(); i++)
 		{
-			for (auto& tile : tile_line)
+			for (int j = 0; j < tiles[i].size(); j++)
 			{
-				if (platform->checkColission(tile))
+				if (platform->checkColission(tiles[i][j]))
 				{
+					if (tiles[i][j]->getColor() == TileColor::orange)
+					{
+						if (i + 1 < tiles.size())
+						{
+							tiles[i + 1][j]->breakTile();
+							if (j + 1 < tiles[i].size())
+							{
+								tiles[i + 1][j + 1]->breakTile();
+							}
+							if (j - 1 >= 0)
+							{
+								tiles[i + 1][j - 1]->breakTile();
+							}
+						}
+						
+						if (j + 1 < tiles[i].size())
+						{
+							tiles[i][j + 1]->breakTile();
+						}
+
+						if (i - 1 >= 0)
+						{
+							tiles[i - 1][j]->breakTile();
+							if (j - 1 >= 0)
+							{
+								tiles[i - 1][j - 1]->breakTile();
+							}
+							if (j + 1 < tiles[i].size())
+							{
+								tiles[i - 1][j + 1]->breakTile();
+							}
+						}
+
+						if (j - 1 >= 0)
+						{
+							tiles[i][j - 1]->breakTile();
+						}
+						
+						explosion->boom(tiles[i][j]->getX(), tiles[i][j]->getY());
+						
+					}
 					return 1;
 				}
 			}
@@ -76,6 +156,8 @@ public:
 
 private:
 	std::vector<std::vector <Tile*>> tiles;
+	Explosion* explosion;
+	
 };
 
 class Background : public HeadSprite
@@ -148,7 +230,7 @@ public:
 		}
 	}
 
-	std::vector<std::vector <int>> getMap() {
+	const std::vector<std::vector <int>> getMap() {
 		return tiles;
 	}
 

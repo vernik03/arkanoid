@@ -31,6 +31,8 @@ enum class TileColor {
 class Tile : public HeadSprite
 {
 public:
+	Tile() {};
+	
 	Tile(TileColor new_color, double new_x = 0, double new_y = 0) {
 		tile_sprites[TileType::broken] = createSprite(("data/tiles/" + str(TileType::broken) + "/" + std::to_string(static_cast<int>(new_color)+1) + ".png").c_str());
 		tile_sprites[TileType::intact] = createSprite(("data/tiles/" + str(TileType::intact) + "/" + std::to_string(static_cast<int>(new_color)+1) + ".png").c_str());
@@ -60,7 +62,7 @@ public:
 		
 	}
 
-	TileCollision checkColission(double ball_x, double ball_y, double ball_radius) {
+	TileCollision checkColission(double ball_x, double ball_y, double ball_radius, int& score) {
 		if (is_broken > 0 || !is_enable)
 		{
 			return TileCollision::no;
@@ -87,12 +89,17 @@ public:
 		if (result != TileCollision::no)
 		{
 			is_broken++;
+			score++;
 		}
 		return result;
 	}
 	
-	void breakTile() {
-		is_broken++;
+	void breakTile(int& score) {
+		if (is_broken == 0)
+		{
+			is_broken++;
+			score++;
+		}
 	}
 
 	void draw() {
@@ -158,3 +165,58 @@ std::string Tile::str(TileType type) {
 		return "";
 	}
 }
+
+enum class Abilities {
+	slow,
+	fast,
+	big,
+	small,
+	three
+};
+
+class Bonus : public Tile
+{
+public:
+	Bonus(Abilities type, double new_x, double new_y, int w, int h){
+		sprite = createSprite(("data/abilities/" + std::to_string(static_cast<int>(type) + 1) + ".png").c_str());
+		setSize(w, h);
+		x = new_x;
+		y = new_y;
+	};
+
+	Bonus(int type, double new_x, double new_y, int w, int h) {
+		sprite = createSprite(("data/abilities/" + std::to_string(type) + ".png").c_str());
+		setSize(w, h);
+		x = new_x;
+		y = new_y;
+	};
+	
+	void draw() {
+		getSpriteSize(sprite, width, height);
+		drawSprite(sprite, x - width / 2, y - height / 2);
+	}
+
+	void move() {
+		y += speed;
+	}
+
+	void setSize(int w, int h) {
+		width = w;
+		height = h;
+	}
+
+	bool checkCatch(int w, int h, double p_x, double p_y) {
+		if ((((x + width / 2 > p_x - w / 2) && (x - width / 2 < p_x + w / 2))
+			&& (y - height / 2 <= p_y + h / 2) && (y + height / 2 >= p_y - h / 2))
+			||
+			(((y + height / 2 > p_y - h / 2) && (y - height / 2 < p_y + h / 2))
+				&& (x - width / 2 <= p_x + w / 2) && (x + width / 2 >= p_x - w / 2)))
+		{
+			return 1;
+		}
+		return 0;
+	}
+
+private:
+	const int speed = 5;
+};

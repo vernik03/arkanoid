@@ -127,8 +127,8 @@ public:
 		return 0;
 	}
 
-	bool checkColission(Tile*& tile) {
-		return ball->checkColission(tile);
+	bool checkColission(Tile*& tile, int& score) {
+		return ball->checkColission(tile, score);
 	}
 
 	void shootBall(double aim_x, double aim_y) {

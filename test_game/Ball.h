@@ -86,8 +86,8 @@ public:
 		return 0;
 	}
 
-	bool checkColission(Tile*& tile) {
-		TileCollision temp_collision = tile->checkColission(x, y, radius);
+	bool checkColission(Tile*& tile, int& score) {
+		TileCollision temp_collision = tile->checkColission(x, y, radius, score);
 		switch (temp_collision)
 		{
 		case TileCollision::no:

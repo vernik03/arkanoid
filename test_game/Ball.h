@@ -93,24 +93,9 @@ public:
 	}
 
 	bool checkCatch(int w, int h, double p_x, double p_y) {
-		/*
-		if ((((x + radius > p_x - w / 2) && (x - radius < p_x + w / 2))
-			&& (y - radius <= p_y + h / 2) && (y + radius >= p_y - h / 2))
-			||
-			(((y + radius > p_y - h / 2) && (y - radius < p_y + h / 2))
-				&& (x - radius <= p_x + w / 2) && (x + radius >= p_x - w / 2)))
-		*/
-
-
-
-		//Surely we are okay with the ball being caught from the ledges of the platform? 
-
-		//above center, can still be caught
 		if (y + radius > p_y - h / 2)
 		{
-			//check if near the platform, small term to account for the ledges
 			if (abs(p_x - (x - radius)) <= (w / 2) * 0.95) {
-				/*breakpoint*/
 				return 1;
 			}
 

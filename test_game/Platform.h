@@ -29,7 +29,7 @@ public:
 		for (int i = 1; i <= 3; i++)
 		{
 			sprites_big[i] = createSprite(("data/platform/big/" + std::to_string(i) + ".png").c_str());
-			setSize(sprites_simple[i], getWidth() / 2, getHeight() / 2);
+			setSize(sprites_big[i], getWidth() / 2, getHeight() / 2);
 		}
 		sprite_small = createSprite("data/platform/small.png");
 		setSize(sprite_small, getWidth() / 2, getHeight() / 2);
@@ -46,7 +46,6 @@ public:
 	~Platform() {};
 
 	void draw() override {
-		getSpriteSize(sprites_simple[1], width, height);
 		ball->draw();
 		if (getTickCount() - timer > 50)
 		{
@@ -56,15 +55,19 @@ public:
 		switch (condition)
 		{
 		case Condition::simple:
+			getSpriteSize(sprites_simple[1], width, height);
 			drawSprite(sprites_simple[int(timer % 3 + 1)], x - width / 2, y - height / 2);
 			break;
 		/*case Condition::shoot:
 			drawSprite(sprites_shoot[int(timer % 3 + 1)], x - width / 2, y - height / 2);
 			break;*/
 		case Condition::big:
+			getSpriteSize(sprites_big[1], width, height);
 			drawSprite(sprites_big[int(timer % 3 + 1)], x - width / 2, y - height / 2);
 			break;
 		case Condition::small:
+			getSpriteSize(sprite_small, width, height);
+			
 			drawSprite(sprite_small, x - width / 2, y - height / 2);
 			break;
 		default:
@@ -96,12 +99,13 @@ public:
 
 	void setSize(Sprite*& temp_sprite, int w, int h) {
 		getSpriteSize(temp_sprite, w, h);
-		setSpriteSize(temp_sprite, w/1.5, h/1.5); // O_o		
+		setSpriteSize(temp_sprite, w/2, h/2); // O_o		
 	}
 	
 	void setBig() {
 		condition = Condition::big;
 		getSpriteSize(sprites_big[1], width, height);
+
 	}
 
 	void setSmall() {
@@ -145,8 +149,8 @@ public:
 		return ball->checkCollision(tile, score);
 	}
 
-	bool checkBonusCollision(Bonus*& bonus, int& score) {
-		bool res = bonus->checkBonusCollision(x, y, width, height);
+	bool checkBonusColission(Bonus*& bonus, int& score) {
+		bool res = bonus->checkBonusColission(x, y, width, height);
 		if (res)
 		{
 			Abilities type = bonus->getType();
@@ -155,6 +159,7 @@ public:
 			case Abilities::slow:
 				break;
 			case Abilities::fast:
+				
 				break;
 			case Abilities::big:
 				setBig();

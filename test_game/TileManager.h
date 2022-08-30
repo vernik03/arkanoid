@@ -103,25 +103,25 @@ public:
 								tiles[i + 1][j]->breakTile(score);
 							if (j + 1 < tiles[i].size())
 							{
-								if(!checkScore(tiles[i + 1][j + 1], score))
+								if (!checkScore(tiles[i + 1][j + 1], score))
 									tiles[i + 1][j + 1]->breakTile(score);
 							}
 							if (j - 1 >= 0)
 							{
-								if(!checkScore(tiles[i + 1][j - 1], score))
+								if (!checkScore(tiles[i + 1][j - 1], score))
 									tiles[i + 1][j - 1]->breakTile(score);
 							}
 						}
 
 						if (j + 1 < tiles[i].size())
 						{
-							if(!checkScore(tiles[i][j + 1], score))
+							if (!checkScore(tiles[i][j + 1], score))
 								tiles[i][j + 1]->breakTile(score);
 						}
 
 						if (i - 1 >= 0)
 						{
-							if(!checkScore(tiles[i - 1][j], score))
+							if (!checkScore(tiles[i - 1][j], score))
 								tiles[i - 1][j]->breakTile(score);
 							if (j - 1 >= 0)
 							{
@@ -150,18 +150,22 @@ public:
 					}
 					return 1;
 				}
-					
+			}
+		}
+
+		for (auto& bonus_tile : bonus_tiles) {
+			if (platform->checkBonusColission(bonus_tile, score))
+			{
+				bonus_tile->disable();
+				//return 1;
 			}
 		}
 		return 0;
 	}
-
+	
 	bool checkScore(Tile*& tile, int& score) {
 		if (score % 3 == 0 && score != 0 && tile->isEnable())
 		{
-			if (dynamic_cast<Bonus*>(tile) != nullptr) {
-				return 0;
-			}
 			Bonus* new_tile = new Bonus(rand() % 5 + 1,
 				tile->getWidth(), tile->getHeight(),
 				tile->getX(), tile->getY());

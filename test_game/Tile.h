@@ -240,15 +240,17 @@ public:
 		return type;
 	}
 
-	bool checkBonusCollision(double p_x, double p_y, double w, double h) {
+	bool checkBonusColission(double p_x, double p_y, double w, double h) {
 		const double SAFE_ZONE = 5;
 		TileCollision result = TileCollision::no;
-		if ((((x + width / 2 > p_x - w / 2) && (x - width / 2 < p_x + w / 2))
-			&& (y - height / 2 <= p_y + h / 2 - SAFE_ZONE) && (y + height / 2 >= p_y - h / 2 + SAFE_ZONE))
-		|| (((y + height / 2 > p_y - h / 2) && (y - height / 2 < p_y + h / 2))
-			&& (x - width / 2 <= p_x + w / 2 - SAFE_ZONE) && (x + width / 2 >= p_x - w / 2 + SAFE_ZONE)))
-		{
-			return 1;
+		if (is_enable) {
+			if ((((x + width / 2 > p_x - w / 2) && (x - width / 2 < p_x + w / 2))
+				&& (y - height / 2 <= p_y + h / 2 - SAFE_ZONE) && (y + height / 2 >= p_y - h / 2 + SAFE_ZONE))
+				|| (((y + height / 2 > p_y - h / 2) && (y - height / 2 < p_y + h / 2))
+					&& (x - width / 2 <= p_x + w / 2 - SAFE_ZONE) && (x + width / 2 >= p_x - w / 2 + SAFE_ZONE)))
+			{
+				return 1;
+			}
 		}
 		return 0;
 	}

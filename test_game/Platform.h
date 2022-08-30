@@ -138,15 +138,15 @@ public:
 		return 0;
 	}
 
-	bool checkColission(Tile*& tile, int& score) {
-		return ball->checkColission(tile, score);
+	bool checkCollision(Tile*& tile, int& score) {
+		return ball->checkCollision(tile, score);
 	}
 
-	bool checkBonusColission(Tile*& bonus, int& score) {
+	bool checkBonusCollision(Tile*& bonus, int& score) {
 		if (dynamic_cast<Bonus*>(bonus) == nullptr) {
 			return 0;
 		}
-		bool res = dynamic_cast<Bonus*>(bonus)->checkBonusColission(x, y, width, height);
+		bool res = dynamic_cast<Bonus*>(bonus)->checkBonusCollision(x, y, width, height);
 		if (res)
 		{
 			Abilities type = dynamic_cast<Bonus*>(bonus)->getType();

@@ -134,11 +134,11 @@ public:
 	}
 
 	
-	 bool checkColission(Tile*& tile, int& score) {
+	 bool checkCollision(Tile*& tile, int& score) {
 		if (dynamic_cast<Bonus*>(tile) != nullptr) {
 			return 0;
 		}
-		TileCollision temp_collision = tile->checkColission(x, y, radius, score);
+		TileCollision temp_collision = tile->checkCollision(x, y, radius, score);
 		switch (temp_collision)
 		{
 		case TileCollision::no:
@@ -175,8 +175,8 @@ public:
 		}
 	}
 
-	bool checkBonusColission(Tile*& bounus, int& score) {
-		TileCollision temp_collision = bounus->checkColission(x, y, radius, score);
+	bool checkBonusCollision(Tile*& bounus, int& score) {
+		TileCollision temp_collision = bounus->checkCollision(x, y, radius, score);
 		switch (temp_collision)
 		{
 		case TileCollision::no:

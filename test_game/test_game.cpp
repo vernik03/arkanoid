@@ -155,7 +155,7 @@ public:
 		showCursor(false);
 		
 		background->draw(window_h);
-		tile_m->checkColission(platform, score);
+		tile_m->checkCollision(platform, score);
 		tile_m->drawAll();
 		if (timer == 0)
 		{

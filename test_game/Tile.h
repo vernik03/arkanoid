@@ -62,7 +62,7 @@ public:
 		
 	}
 
-	virtual TileCollision checkColission(double ball_x, double ball_y, double ball_radius, int& score) {
+	virtual TileCollision checkCollision(double ball_x, double ball_y, double ball_radius, int& score) {
 		if (is_broken > 0 || !is_enable)
 		{
 			return TileCollision::no;
@@ -240,7 +240,7 @@ public:
 		return type;
 	}
 
-	bool checkBonusColission(double p_x, double p_y, double w, double h) {
+	bool checkBonusCollision(double p_x, double p_y, double w, double h) {
 		const double SAFE_ZONE = 5;
 		TileCollision result = TileCollision::no;
 		if ((((x + width / 2 > p_x - w / 2) && (x - width / 2 < p_x + w / 2))

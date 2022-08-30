@@ -81,14 +81,14 @@ public:
 	}
 
 
-	bool checkColission(std::unique_ptr<Platform>& platform, int& score) {
+	bool checkCollision(std::unique_ptr<Platform>& platform, int& score) {
 		for (int i = 0; i < tiles.size(); i++)
 		{
 			for (int j = 0; j < tiles[i].size(); j++)
 			{
 				if (dynamic_cast<Tile*>(tiles[i][j]))
 				{
-					if (platform->checkColission(tiles[i][j], score))
+					if (platform->checkCollision(tiles[i][j], score))
 					{
 						if (tiles[i][j]->getColor() == TileColor::orange)
 						{
@@ -148,7 +148,7 @@ public:
 				}
 				else
 				{
-					if(platform->checkBonusColission(tiles[i][j], score))
+					if(platform->checkBonusCollision(tiles[i][j], score))
 					{
 						tiles[i][j]->disable();
 						//return 1;

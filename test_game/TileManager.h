@@ -217,7 +217,6 @@ public:
 	void deleteDroppers(int window_h) {
 		std::vector<Bonus*> to_erase = {};
 		for (auto bonus_tile : bonus_tiles) {
-			//too low. Must be deleted.
 			if (bonus_tile->getY() >= window_h) {
 				to_erase.push_back(bonus_tile);
 			}

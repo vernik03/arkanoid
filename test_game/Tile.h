@@ -254,6 +254,6 @@ public:
 	}
 
 private:
-	const int speed = 5;
+	const int speed = 1;
 	Abilities type;
 };

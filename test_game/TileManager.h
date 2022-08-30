@@ -78,6 +78,13 @@ public:
 			}
 		}
 		explosion->draw();
+
+		const int BONUS_SPEED = 1;
+		for (auto& bonus_tile : bonus_tiles)
+		{
+			bonus_tile->move();
+			bonus_tile->draw();
+		}
 	}
 
 
@@ -86,74 +93,64 @@ public:
 		{
 			for (int j = 0; j < tiles[i].size(); j++)
 			{
-				if (dynamic_cast<Tile*>(tiles[i][j]))
+				if (platform->checkCollision(tiles[i][j], score))
 				{
-					if (platform->checkCollision(tiles[i][j], score))
+					if (tiles[i][j]->getColor() == TileColor::orange)
 					{
-						if (tiles[i][j]->getColor() == TileColor::orange)
+						if (i + 1 < tiles.size())
 						{
-							if (i + 1 < tiles.size())
-							{
-								if (!checkScore(tiles[i + 1][j], score))
-									tiles[i + 1][j]->breakTile(score);
-								if (j + 1 < tiles[i].size())
-								{
-									if(!checkScore(tiles[i + 1][j + 1], score))
-										tiles[i + 1][j + 1]->breakTile(score);
-								}
-								if (j - 1 >= 0)
-								{
-									if(!checkScore(tiles[i + 1][j - 1], score))
-										tiles[i + 1][j - 1]->breakTile(score);
-								}
-							}
-
+							if (!checkScore(tiles[i + 1][j], score))
+								tiles[i + 1][j]->breakTile(score);
 							if (j + 1 < tiles[i].size())
 							{
-								if(!checkScore(tiles[i][j + 1], score))
-									tiles[i][j + 1]->breakTile(score);
+								if(!checkScore(tiles[i + 1][j + 1], score))
+									tiles[i + 1][j + 1]->breakTile(score);
 							}
-
-							if (i - 1 >= 0)
-							{
-								if(!checkScore(tiles[i - 1][j], score))
-									tiles[i - 1][j]->breakTile(score);
-								if (j - 1 >= 0)
-								{
-									if (!checkScore(tiles[i - 1][j - 1], score))
-										tiles[i - 1][j - 1]->breakTile(score);
-								}
-								if (j + 1 < tiles[i].size())
-								{
-									if (!checkScore(tiles[i - 1][j + 1], score))
-										tiles[i - 1][j + 1]->breakTile(score);
-								}
-							}
-
 							if (j - 1 >= 0)
 							{
-								if (!checkScore(tiles[i][j - 1], score))
-									tiles[i][j - 1]->breakTile(score);
+								if(!checkScore(tiles[i + 1][j - 1], score))
+									tiles[i + 1][j - 1]->breakTile(score);
 							}
-
-							explosion->boom(tiles[i][j]->getX(), tiles[i][j]->getY());
-
 						}
-						else
+
+						if (j + 1 < tiles[i].size())
 						{
-							checkScore(tiles[i][j], score);
+							if(!checkScore(tiles[i][j + 1], score))
+								tiles[i][j + 1]->breakTile(score);
 						}
-						return 1;
+
+						if (i - 1 >= 0)
+						{
+							if(!checkScore(tiles[i - 1][j], score))
+								tiles[i - 1][j]->breakTile(score);
+							if (j - 1 >= 0)
+							{
+								if (!checkScore(tiles[i - 1][j - 1], score))
+									tiles[i - 1][j - 1]->breakTile(score);
+							}
+							if (j + 1 < tiles[i].size())
+							{
+								if (!checkScore(tiles[i - 1][j + 1], score))
+									tiles[i - 1][j + 1]->breakTile(score);
+							}
+						}
+
+						if (j - 1 >= 0)
+						{
+							if (!checkScore(tiles[i][j - 1], score))
+								tiles[i][j - 1]->breakTile(score);
+						}
+
+						explosion->boom(tiles[i][j]->getX(), tiles[i][j]->getY());
+
 					}
-				}
-				else
-				{
-					if(platform->checkBonusCollision(tiles[i][j], score))
+					else
 					{
-						tiles[i][j]->disable();
-						//return 1;
+						checkScore(tiles[i][j], score);
 					}
+					return 1;
 				}
+					
 			}
 		}
 		return 0;
@@ -165,9 +162,11 @@ public:
 			if (dynamic_cast<Bonus*>(tile) != nullptr) {
 				return 0;
 			}
-			tile = new Bonus(rand() % 5 + 1,
+			Bonus* new_tile = new Bonus(rand() % 5 + 1,
 				tile->getWidth(), tile->getHeight(),
 				tile->getX(), tile->getY());
+			tile->breakTile(score);
+			bonus_tiles.push_back(new_tile);
 			return 1;
 		}
 		return 0;
@@ -189,6 +188,7 @@ public:
 
 private:
 	std::vector<std::vector <Tile*>> tiles;
+	std::vector<Bonus*> bonus_tiles;
 	Explosion* explosion;
 
 };

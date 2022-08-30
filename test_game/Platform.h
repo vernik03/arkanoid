@@ -7,7 +7,7 @@
 
 enum class Condition {
 	simple,
-	shoot,
+	//shoot,
 	big,
 	small
 };
@@ -21,13 +21,16 @@ public:
 			sprites_simple[i] = createSprite(("data/platform/simple/" + std::to_string(i) + ".png").c_str());
 			setSize(sprites_simple[i], getWidth() / 2, getHeight() / 2);
 		}
-		for (int i = 1; i <= 3; i++)
+		/*for (int i = 1; i <= 3; i++)
 		{
 			sprites_shoot[i] = createSprite(("data/platform/shoot/" + std::to_string(i) + ".png").c_str());
 			setSize(sprites_simple[i], getWidth() / 2, getHeight() / 2);
+		}*/
+		for (int i = 1; i <= 3; i++)
+		{
+			sprites_big[i] = createSprite(("data/platform/big/" + std::to_string(i) + ".png").c_str());
+			setSize(sprites_simple[i], getWidth() / 2, getHeight() / 2);
 		}
-		sprite_big = createSprite("data/platform/big.png");
-		setSize(sprite_big, getWidth() / 2, getHeight() / 2);
 		sprite_small = createSprite("data/platform/small.png");
 		setSize(sprite_small, getWidth() / 2, getHeight() / 2);
 		window_w = new_window_w;
@@ -55,11 +58,11 @@ public:
 		case Condition::simple:
 			drawSprite(sprites_simple[int(timer % 3 + 1)], x - width / 2, y - height / 2);
 			break;
-		case Condition::shoot:
+		/*case Condition::shoot:
 			drawSprite(sprites_shoot[int(timer % 3 + 1)], x - width / 2, y - height / 2);
-			break;
+			break;*/
 		case Condition::big:
-			drawSprite(sprite_big, x - width / 2, y - height / 2);
+			drawSprite(sprites_big[int(timer % 3 + 1)], x - width / 2, y - height / 2);
 			break;
 		case Condition::small:
 			drawSprite(sprite_small, x - width / 2, y - height / 2);
@@ -98,7 +101,7 @@ public:
 	
 	void setBig() {
 		condition = Condition::big;
-		getSpriteSize(sprite_big, width, height);
+		getSpriteSize(sprites_big[1], width, height);
 	}
 
 	void setSmall() {
@@ -142,14 +145,11 @@ public:
 		return ball->checkCollision(tile, score);
 	}
 
-	bool checkBonusCollision(Tile*& bonus, int& score) {
-		if (dynamic_cast<Bonus*>(bonus) == nullptr) {
-			return 0;
-		}
-		bool res = dynamic_cast<Bonus*>(bonus)->checkBonusCollision(x, y, width, height);
+	bool checkBonusCollision(Bonus*& bonus, int& score) {
+		bool res = bonus->checkBonusCollision(x, y, width, height);
 		if (res)
 		{
-			Abilities type = dynamic_cast<Bonus*>(bonus)->getType();
+			Abilities type = bonus->getType();
 			switch (type)
 			{
 			case Abilities::slow:
@@ -213,7 +213,8 @@ private:
 
 	Condition condition;
 	std::map<int, Sprite*> sprites_simple;
-	std::map<int, Sprite*> sprites_shoot;
+	//std::map<int, Sprite*> sprites_shoot;
+	std::map<int, Sprite*> sprites_big;
 	Sprite* sprite_big;
 	Sprite* sprite_small;
 };

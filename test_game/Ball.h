@@ -24,7 +24,7 @@ public:
 		y_delay = 0;
 	};
 
-	void draw() {
+	void draw() override {
 		drawSprite(sprites_ball[current_ball], x - width / 2, y - height / 2);
 	}
 
@@ -57,18 +57,65 @@ public:
 		x += x_speed;
 		y += y_speed;
 
+		int dir = checkPlatformSideCollision(w, h, p_x, p_y);
+
+		//sure enough, we will overstep the speed boundaries; but the ball is lost anyway, so who cares?
+		x_speed += dir;
+		//So that the ball does not overlap with the platform.
+		if ((dir == -1) && (abs(p_x - x) < w / 2 + radius)) {
+			x = p_x - w / 2 - radius - 5;
+		}
+		if ((dir == 1) && (abs(p_x - x) < w / 2 + radius)) {
+			x = p_x + w / 2 + radius + 5;
+		}
 		return checkCatch(w, h, p_x, p_y);
 	}
 
+	//Is the ball being knocked to the side by the platform? Return direction if yes.
+	int checkPlatformSideCollision(int w, int h, double p_x, double p_y) {
+		if (y > p_y) {
+			if ((p_x - w / 2 - x >= 0) && (p_x - w / 2 - x < radius)) {
+				return -1;
+			}
+			else if ((p_x + w / 2 - x >= 0) && (p_x + w / 2 - x < radius)) {
+				return 1;
+			}
+		}
+		else if (y > p_y - h / 2) {
+			if ((p_x - w / 2 - x >= 0) && (p_x - w / 2 - x < radius)) {
+				return -1;
+			}
+			else if ((p_x + w / 2 - x >= 0) && (p_x + w / 2 - x < radius)) {
+				return 1;
+			}
+		}
+		return 0;
+	}
+
 	bool checkCatch(int w, int h, double p_x, double p_y) {
+		/*
 		if ((((x + radius > p_x - w / 2) && (x - radius < p_x + w / 2))
 			&& (y - radius <= p_y + h / 2) && (y + radius >= p_y - h / 2))
 			||
 			(((y + radius > p_y - h / 2) && (y - radius < p_y + h / 2))
 				&& (x - radius <= p_x + w / 2) && (x + radius >= p_x - w / 2)))
+		*/
+
+
+
+		//Surely we are okay with the ball being caught from the ledges of the platform? 
+
+		//above center, can still be caught
+		if (y + radius > p_y - h / 2)
 		{
-			return 1;
+			//check if near the platform, small term to account for the ledges
+			if (abs(p_x - (x - radius)) <= (w / 2) * 0.95) {
+				/*breakpoint*/
+				return 1;
+			}
+
 		}
+
 		return 0;
 	}
 
@@ -86,7 +133,8 @@ public:
 		return 0;
 	}
 
-	bool checkColission(Tile*& tile, int& score) {
+	
+	 bool checkColission(Tile*& tile, int& score) {
 		TileCollision temp_collision = tile->checkColission(x, y, radius, score);
 		switch (temp_collision)
 		{
@@ -98,6 +146,7 @@ public:
 				y_speed *= -1;
 			}
 			y_delay -= y_delay;
+			//move();
 			return 1;
 		case TileCollision::horisontal:
 			if (!x_delay)
@@ -117,6 +166,19 @@ public:
 				y_speed *= -1;
 			}
 			y_delay -= y_delay;
+			return 1;
+		default:
+			return 0;
+		}
+	}
+
+	bool checkBonusColission(Tile*& bounus, int& score) {
+		TileCollision temp_collision = bounus->checkColission(x, y, radius, score);
+		switch (temp_collision)
+		{
+		case TileCollision::no:
+			return 0;
+		case TileCollision::both:
 			return 1;
 		default:
 			return 0;

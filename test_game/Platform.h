@@ -42,7 +42,7 @@ public:
 	}
 	~Platform() {};
 
-	void draw() {
+	void draw() override {
 		getSpriteSize(sprites_simple[1], width, height);
 		ball->draw();
 		if (getTickCount() - timer > 50)
@@ -129,6 +129,10 @@ public:
 
 	bool checkColission(Tile*& tile, int& score) {
 		return ball->checkColission(tile, score);
+	}
+
+	bool checkBonusColission(Tile*& bonus, int& score) {
+		return bonus->checkBonusColission(x, y, width, height);
 	}
 
 	void shootBall(double aim_x, double aim_y) {

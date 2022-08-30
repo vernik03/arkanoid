@@ -62,7 +62,7 @@ public:
 		
 	}
 
-	TileCollision checkColission(double ball_x, double ball_y, double ball_radius, int& score) {
+	virtual TileCollision checkColission(double ball_x, double ball_y, double ball_radius, int& score) {
 		if (is_broken > 0 || !is_enable)
 		{
 			return TileCollision::no;
@@ -102,7 +102,7 @@ public:
 		}
 	}
 
-	void draw() {
+	virtual void draw() {
 		getSpriteSize(tile_sprites[TileType::intact], width, height);
 
 		const int broken_maximum = 70;
@@ -126,7 +126,7 @@ public:
 		return color;
 	}
 
-	void setSize(int w, int h) {
+	virtual void setSize(int w, int h) {
 		setSpriteSize(tile_sprites[TileType::broken], w, h);	
 		setSpriteSize(tile_sprites[TileType::intact], w, h);
 		width = w;
@@ -141,6 +141,18 @@ public:
 		return false;
 	}
 
+	bool isEnable() {
+		if (is_enable)
+		{
+			return true;
+		}
+		return false;
+	}
+
+	virtual bool checkBonusColission(double p_x, double p_y, double w, double h) {
+		return 0;
+	};
+	
 protected:
 	std::string str(TileType type);
 
@@ -177,32 +189,37 @@ enum class Abilities {
 class Bonus : public Tile
 {
 public:
-	Bonus(Abilities type, double new_x, double new_y, int w, int h){
+	Bonus(Abilities type, int w, int h, double new_x, double new_y){
 		sprite = createSprite(("data/abilities/" + std::to_string(static_cast<int>(type) + 1) + ".png").c_str());
+		setXY(new_x, new_y);
 		setSize(w, h);
-		x = new_x;
-		y = new_y;
+		is_enable = 1;
 	};
 
-	Bonus(int type, double new_x, double new_y, int w, int h) {
+	Bonus(int type, int w, int h, double new_x, double new_y) {
 		sprite = createSprite(("data/abilities/" + std::to_string(type) + ".png").c_str());
+		setXY(new_x, new_y);
 		setSize(w, h);
-		x = new_x;
-		y = new_y;
+		is_enable = 1;
 	};
 	
-	void draw() {
-		getSpriteSize(sprite, width, height);
-		drawSprite(sprite, x - width / 2, y - height / 2);
+	void draw() override {
+		if (is_enable)
+		{
+			getSpriteSize(sprite, width, height);
+			drawSprite(sprite, x - width / 2, y - height / 2);
+		}
 	}
 
 	void move() {
 		y += speed;
 	}
 
-	void setSize(int w, int h) {
-		width = w;
-		height = h;
+	void setSize(int w, int h) override {
+		getSpriteSize(sprite, width, height);
+		height *= (double)w / (double)width;
+		setSpriteSize(sprite, w, height);
+		getSpriteSize(sprite, width, height);
 	}
 
 	bool checkCatch(int w, int h, double p_x, double p_y) {
@@ -212,6 +229,20 @@ public:
 			(((y + height / 2 > p_y - h / 2) && (y - height / 2 < p_y + h / 2))
 				&& (x - width / 2 <= p_x + w / 2) && (x + width / 2 >= p_x - w / 2)))
 		{
+			return 1;
+		}
+		return 0;
+	}
+
+	bool checkBonusColission(double p_x, double p_y, double w, double h) override{
+		const double SAFE_ZONE = 5;
+		TileCollision result = TileCollision::no;
+		if ((((x + width / 2 > p_x - w / 2) && (x - width / 2 < p_x + w / 2))
+			&& (y - height / 2 <= p_y + h / 2 - SAFE_ZONE) && (y + height / 2 >= p_y - h / 2 + SAFE_ZONE))
+		|| (((y + height / 2 > p_y - h / 2) && (y - height / 2 < p_y + h / 2))
+			&& (x - width / 2 <= p_x + w / 2 - SAFE_ZONE) && (x + width / 2 >= p_x - w / 2 + SAFE_ZONE)))
+		{
+			is_enable = 0;
 			return 1;
 		}
 		return 0;

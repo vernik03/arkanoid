@@ -12,7 +12,7 @@ public:
 		setXY(new_x, new_y);
 	}
 
-	void draw() {
+	virtual void draw() {
 		getSpriteSize(sprite, width, height);
 		drawSprite(sprite, x - width / 2, y - height / 2);
 	}
@@ -25,7 +25,7 @@ public:
 		return height;
 	}
 
-	void setSize(int w, int h) {
+	virtual void setSize(int w, int h) {
 		setSpriteSize(sprite, w, h); 
 		getSpriteSize(sprite, width, height);
 	}

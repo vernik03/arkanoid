@@ -162,6 +162,9 @@ public:
 	bool checkScore(Tile*& tile, int& score) {
 		if (score % 3 == 0 && score != 0 && tile->isEnable())
 		{
+			if (dynamic_cast<Bonus*>(tile) != nullptr) {
+				return 0;
+			}
 			tile = new Bonus(rand() % 5 + 1,
 				tile->getWidth(), tile->getHeight(),
 				tile->getX(), tile->getY());

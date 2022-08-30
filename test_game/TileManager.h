@@ -175,7 +175,7 @@ public:
 		{
 			for (auto& tile : tile_line)
 			{
-				if (!tile->isBroken())
+				if (!tile->isBroken() && dynamic_cast<Bonus*>(tile) == nullptr)
 				{
 					return 0;
 				}

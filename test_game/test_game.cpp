@@ -101,7 +101,6 @@ private:
 	std::vector<std::vector <int>> tiles;
 };
 
-/* Test Framework realization */
 class MyFramework : public Framework {
 
 public:
@@ -155,6 +154,7 @@ public:
 		showCursor(false);
 		
 		background->draw(window_h);
+		tile_m->deleteDroppers(window_h);
 		tile_m->checkCollision(platform, score);
 		tile_m->drawAll();
 		if (timer == 0)
@@ -287,8 +287,8 @@ private:
 
 int main(int argc, char* argv[])
 {
-	int x = 800;
-	int y = 600;
+	int x = 1800;
+	int y = 1600;
 	bool fullscreen = false;
 	for (int i = 0; i < argc - 1; i++)
 	{

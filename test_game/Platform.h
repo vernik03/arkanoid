@@ -21,11 +21,6 @@ public:
 			sprites_simple[i] = createSprite(("data/platform/simple/" + std::to_string(i) + ".png").c_str());
 			setSize(sprites_simple[i], getWidth() / 2, getHeight() / 2);
 		}
-		/*for (int i = 1; i <= 3; i++)
-		{
-			sprites_shoot[i] = createSprite(("data/platform/shoot/" + std::to_string(i) + ".png").c_str());
-			setSize(sprites_simple[i], getWidth() / 2, getHeight() / 2);
-		}*/
 		for (int i = 1; i <= 3; i++)
 		{
 			sprites_big[i] = createSprite(("data/platform/big/" + std::to_string(i) + ".png").c_str());
@@ -49,7 +44,6 @@ public:
 		ball->draw();
 		if (getTickCount() - timer > 50)
 		{
-			//rand_sprite = int(rand() % 3 + 1);
 			timer = getTickCount();
 		}
 		switch (condition)
@@ -58,9 +52,6 @@ public:
 			getSpriteSize(sprites_simple[1], width, height);
 			drawSprite(sprites_simple[int(timer % 3 + 1)], x - width / 2, y - height / 2);
 			break;
-		/*case Condition::shoot:
-			drawSprite(sprites_shoot[int(timer % 3 + 1)], x - width / 2, y - height / 2);
-			break;*/
 		case Condition::big:
 			getSpriteSize(sprites_big[1], width, height);
 			drawSprite(sprites_big[int(timer % 3 + 1)], x - width / 2, y - height / 2);
@@ -99,7 +90,7 @@ public:
 
 	void setSize(Sprite*& temp_sprite, int w, int h) {
 		getSpriteSize(temp_sprite, w, h);
-		setSpriteSize(temp_sprite, w/2, h/2); // O_o		
+		setSpriteSize(temp_sprite, w/2, h/2); 	
 	}
 	
 	void setBig() {
@@ -149,17 +140,18 @@ public:
 		return ball->checkCollision(tile, score);
 	}
 
-	bool checkBonusColission(Bonus*& bonus, int& score) {
-		bool res = bonus->checkBonusColission(x, y, width, height);
+	bool checkBonusColission(Bonus*& b, int& score) {
+		bool res = b->checkBonusColission(x, y, width, height);
 		if (res)
 		{
-			Abilities type = bonus->getType();
-			switch (type)
+			bonus = b->getType();
+			switch (bonus)
 			{
 			case Abilities::slow:
+				ball->removeSpeed(3);
 				break;
 			case Abilities::fast:
-				
+				ball->addSpeed(2);
 				break;
 			case Abilities::big:
 				setBig();
@@ -174,6 +166,14 @@ public:
 			}
 		}
 		return res;
+	}
+
+	Abilities getType() {
+		return bonus;
+	}
+
+	Abilities getBallType() {
+		return ball->getType();
 	}
 
 	void shootBall(double aim_x, double aim_y) {
@@ -209,7 +209,6 @@ private:
 	Ball* ball;
 
 	unsigned int timer; 
-	//int rand_sprite;
 	
 	int window_w;
 	int window_h;
@@ -218,8 +217,9 @@ private:
 
 	Condition condition;
 	std::map<int, Sprite*> sprites_simple;
-	//std::map<int, Sprite*> sprites_shoot;
 	std::map<int, Sprite*> sprites_big;
 	Sprite* sprite_big;
 	Sprite* sprite_small;
+
+	Abilities bonus;
 };

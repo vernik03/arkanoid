@@ -58,10 +58,7 @@ public:
 		y += y_speed;
 
 		int dir = checkPlatformSideCollision(w, h, p_x, p_y);
-
-		//sure enough, we will overstep the speed boundaries; but the ball is lost anyway, so who cares?
 		x_speed += dir;
-		//So that the ball does not overlap with the platform.
 		if ((dir == -1) && (abs(p_x - x) < w / 2 + radius)) {
 			x = p_x - w / 2 - radius - 5;
 		}
@@ -71,7 +68,6 @@ public:
 		return checkCatch(w, h, p_x, p_y);
 	}
 
-	//Is the ball being knocked to the side by the platform? Return direction if yes.
 	int checkPlatformSideCollision(int w, int h, double p_x, double p_y) {
 		if (y > p_y) {
 			if ((p_x - w / 2 - x >= 0) && (p_x - w / 2 - x < radius)) {
@@ -134,7 +130,6 @@ public:
 				y_speed *= -1;
 			}
 			y_delay -= y_delay;
-			//move();
 			return 1;
 		case TileCollision::horisontal:
 			if (!x_delay)
@@ -173,16 +168,36 @@ public:
 		}
 	}
 
+	Abilities getType() {
+		return type;
+	}
+
+	void removeSpeed(double number) {
+		x_speed /= number;
+		y_speed /= number;
+		speed /= number;
+		type = Abilities::slow;
+	}
+
+	void addSpeed(double number) {
+		x_speed *= number;
+		y_speed *= number;
+		speed *= number;
+		type = Abilities::fast;
+	}
+
 
 private:
 	double x_speed;
 	double y_speed;
-	const int speed = 2;
+	double speed = 2;
 
 	double radius;
 
 	bool x_delay;
 	bool y_delay;
+
+	Abilities type;
 
 	std::map<int, Sprite*> sprites_ball;
 	int current_ball;

@@ -62,7 +62,7 @@ public:
 			drawSprite(sprite_big, x - width / 2, y - height / 2);
 			break;
 		case Condition::small:
-			drawSprite(sprite_big, x - width / 2, y - height / 2);
+			drawSprite(sprite_small, x - width / 2, y - height / 2);
 			break;
 		default:
 			break;
@@ -95,6 +95,17 @@ public:
 		getSpriteSize(temp_sprite, w, h);
 		setSpriteSize(temp_sprite, w/1.5, h/1.5); // O_o		
 	}
+	
+	void setBig() {
+		condition = Condition::big;
+		getSpriteSize(sprite_big, width, height);
+	}
+
+	void setSmall() {
+		condition = Condition::small;
+		getSpriteSize(sprite_small, width, height);
+	}
+
 
 	void stopLeft() {
 		left_speed = 0;
@@ -132,7 +143,32 @@ public:
 	}
 
 	bool checkBonusColission(Tile*& bonus, int& score) {
-		return bonus->checkBonusColission(x, y, width, height);
+		if (dynamic_cast<Bonus*>(bonus) == nullptr) {
+			return 0;
+		}
+		bool res = dynamic_cast<Bonus*>(bonus)->checkBonusColission(x, y, width, height);
+		if (res)
+		{
+			Abilities type = dynamic_cast<Bonus*>(bonus)->getType();
+			switch (type)
+			{
+			case Abilities::slow:
+				break;
+			case Abilities::fast:
+				break;
+			case Abilities::big:
+				setBig();
+				break;
+			case Abilities::small:
+				setSmall();
+				break;
+			case Abilities::three:
+				break;
+			default:
+				break;
+			}
+		}
+		return res;
 	}
 
 	void shootBall(double aim_x, double aim_y) {

@@ -149,9 +149,9 @@ public:
 		return false;
 	}
 
-	virtual bool checkBonusColission(double p_x, double p_y, double w, double h) {
-		return 0;
-	};
+	void disable() {
+		is_enable = 0;
+	}
 	
 protected:
 	std::string str(TileType type);
@@ -189,18 +189,20 @@ enum class Abilities {
 class Bonus : public Tile
 {
 public:
-	Bonus(Abilities type, int w, int h, double new_x, double new_y){
-		sprite = createSprite(("data/abilities/" + std::to_string(static_cast<int>(type) + 1) + ".png").c_str());
+	Bonus(Abilities new_type, int w, int h, double new_x, double new_y){
+		sprite = createSprite(("data/abilities/" + std::to_string(static_cast<int>(new_type) + 1) + ".png").c_str());
 		setXY(new_x, new_y);
 		setSize(w, h);
 		is_enable = 1;
+		type = new_type;
 	};
 
-	Bonus(int type, int w, int h, double new_x, double new_y) {
-		sprite = createSprite(("data/abilities/" + std::to_string(type) + ".png").c_str());
+	Bonus(int new_type, int w, int h, double new_x, double new_y) {
+		sprite = createSprite(("data/abilities/" + std::to_string(new_type) + ".png").c_str());
 		setXY(new_x, new_y);
 		setSize(w, h);
 		is_enable = 1;
+		type = static_cast<Abilities>(new_type - 1);
 	};
 	
 	void draw() override {
@@ -234,7 +236,11 @@ public:
 		return 0;
 	}
 
-	bool checkBonusColission(double p_x, double p_y, double w, double h) override{
+	Abilities getType() {
+		return type;
+	}
+
+	bool checkBonusColission(double p_x, double p_y, double w, double h) {
 		const double SAFE_ZONE = 5;
 		TileCollision result = TileCollision::no;
 		if ((((x + width / 2 > p_x - w / 2) && (x - width / 2 < p_x + w / 2))
@@ -242,7 +248,6 @@ public:
 		|| (((y + height / 2 > p_y - h / 2) && (y - height / 2 < p_y + h / 2))
 			&& (x - width / 2 <= p_x + w / 2 - SAFE_ZONE) && (x + width / 2 >= p_x - w / 2 + SAFE_ZONE)))
 		{
-			is_enable = 0;
 			return 1;
 		}
 		return 0;
@@ -250,4 +255,5 @@ public:
 
 private:
 	const int speed = 5;
+	Abilities type;
 };

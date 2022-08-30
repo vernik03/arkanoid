@@ -135,6 +135,9 @@ public:
 
 	
 	 bool checkColission(Tile*& tile, int& score) {
+		if (dynamic_cast<Bonus*>(tile) != nullptr) {
+			return 0;
+		}
 		TileCollision temp_collision = tile->checkColission(x, y, radius, score);
 		switch (temp_collision)
 		{

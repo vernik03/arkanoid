@@ -150,7 +150,8 @@ public:
 				{
 					if(platform->checkBonusColission(tiles[i][j], score))
 					{
-						return 1;
+						tiles[i][j]->disable();
+						//return 1;
 					}
 				}
 			}

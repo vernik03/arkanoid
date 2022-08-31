@@ -150,7 +150,7 @@ public:
 	}
 
 	bool ballIsAlive(Ball*& every_ball) {
-		return every_ball->getY() < window_h + 20;
+		return (every_ball->getY() < window_h + every_ball->getHeight() && every_ball->getX() < window_w + every_ball->getHeight());
 	}
 
 	bool allBallsIsAlive() {
@@ -172,6 +172,7 @@ public:
 			{
 				tryToCatch();
 			}
+			
 		}
 	}
 

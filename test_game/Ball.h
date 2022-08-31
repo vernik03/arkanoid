@@ -23,6 +23,7 @@ public:
 		x_delay = 0;
 		y_delay = 0;
 		type = Abilities::none;
+		speed_num = 1;
 	};
 
 	void draw() override {
@@ -44,7 +45,7 @@ public:
 			x_delay -= x_delay;
 		}
 
-		if ((y + radius < 0) ||
+		if ((y - radius < 0) ||
 			(((y + radius > p_y - h / 2) && (y - radius < p_y + h / 2))
 				&& (x - radius <= p_x + w / 2 - SAFE_ZONE) && (x + radius >= p_x - w / 2 + SAFE_ZONE)))
 		{
@@ -102,7 +103,7 @@ public:
 	}
 
 	bool shoot(double aim_x, double aim_y, int w) {
-		if (aim_y < y && (aim_x < x - w / 6 || aim_x > x + w / 6))
+		if (aim_y < y && (aim_x < x - w / 8 || aim_x > x + w / 8))
 		{
 			x_speed = aim_x - x;
 			y_speed = aim_y - y;
@@ -183,19 +184,28 @@ public:
 		return type;
 	}
 
+	void setType(Abilities t, double speed_n) {
+		speed_num = speed_n;
+		type = t;
+	}
+
+	double getSpeedNum() {
+		return speed_num;
+	}
+
 	void removeSpeed(double number) {
 		x_speed /= number;
 		y_speed /= number;
-		speed /= 2 * number;
-		speed_num = number;
+		speed_num *= number;
+		std::cout << speed_num << "* ";
 		type = Abilities::slow;
 	}
 
 	void addSpeed(double number) {
 		x_speed *= number;
 		y_speed *= number;
-		speed *= 2 * number;
-		speed_num = number;
+		speed_num *= number;
+		std::cout << speed_num << "* ";
 		type = Abilities::fast;
 	}
 

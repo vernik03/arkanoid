@@ -168,7 +168,7 @@ public:
 		}
 		else
 		{
-			if (every_ball->move(window_w, width, height, x, y) && !anyBallIsAlive())
+			if (every_ball->move(window_w, width, height, x, y) && !anyBallIsAlive() && bonus != Abilities::teleport)
 			{
 				tryToCatch();
 			}
@@ -184,13 +184,19 @@ public:
 		{
 			if (ballIsAlive(extra_ball_1))
 			{
-				ball = std::move(extra_ball_1);
+				ball->setXY(extra_ball_1->getX(), extra_ball_1->getY());
+				ball->setSpeed(extra_ball_1->getXSpeed(), extra_ball_1->getYSpeed());
+				
 				extra_ball_1->setY(window_h + 200);
+				return 0;
 			}
 			else if (ballIsAlive(extra_ball_2))
 			{
-				ball = std::move(extra_ball_2);
+				ball->setXY(extra_ball_2->getX(), extra_ball_2->getY());
+				ball->setSpeed(extra_ball_2->getXSpeed(), extra_ball_2->getYSpeed());
+				
 				extra_ball_2->setY(window_h + 200);
+				return 0;
 			}
 			else
 			{
@@ -223,9 +229,25 @@ public:
 			{
 			case Abilities::slow:
 				ball->removeSpeed(3);
+				if (ballIsAlive(extra_ball_1))
+				{
+					extra_ball_1->removeSpeed(3);
+				}
+				if (ballIsAlive(extra_ball_2))
+				{
+					extra_ball_2->removeSpeed(3);
+				}
 				break;
 			case Abilities::fast:
 				ball->addSpeed(2);
+				if (ballIsAlive(extra_ball_1))
+				{
+					extra_ball_1->addSpeed(2);
+				}
+				if (ballIsAlive(extra_ball_2))
+				{
+					extra_ball_2->addSpeed(2);
+				}
 				break;
 			case Abilities::big:
 				setBig();
@@ -263,6 +285,9 @@ public:
 		if (!is_in_game)
 		{
 			is_in_game = ball->shoot(aim_x, aim_y, width);
+
+			extra_ball_1->setY(window_h + 200);
+			extra_ball_2->setY(window_h + 200);
 		}
 	}
 
@@ -273,7 +298,12 @@ public:
 			if (catch_delay == 0)
 			{
 				is_in_game = 0;
+				Abilities temp_a = ball->getType();
+				double temp_s = ball->getSpeedNum();
 				ball = new Ball(x, y - height / 2);
+				ball->setType(temp_a, temp_s);
+
+				
 			}
 			catch_delay ++;
 			if (catch_delay > 10)

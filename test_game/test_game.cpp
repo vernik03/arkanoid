@@ -287,8 +287,8 @@ private:
 
 int main(int argc, char* argv[])
 {
-	int x = 800;
-	int y = 600;
+	int x = 1800;
+	int y = 1600;
 	bool fullscreen = false;
 	for (int i = 0; i < argc - 1; i++)
 	{

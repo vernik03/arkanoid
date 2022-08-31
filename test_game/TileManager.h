@@ -191,7 +191,7 @@ public:
 	}
 	
 	bool checkScore(Tile*& tile, int& score, std::unique_ptr<Platform>& platform) {
-		if (score % 2 == 0 && score != 0 && tile->isEnable())
+		if (score % 10 == 0 && score != 0 && tile->isEnable())
 		{
 			int i = 0;
 			Abilities type;

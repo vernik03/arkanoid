@@ -102,6 +102,14 @@ public:
 				}
 			}
 		}
+		for (auto& bonus : bonus_tiles) {
+			if (bonus->getX() == bonus_tile->getX()) {
+				double dist = bonus->getY() - (bonus_tile->getY() + bonus_tile->getHeight());
+				if (dist == 1) {
+					return 0;
+				}
+			}
+		}
 		return 1;
 	}
 
@@ -183,7 +191,7 @@ public:
 	}
 	
 	bool checkScore(Tile*& tile, int& score, std::unique_ptr<Platform>& platform) {
-		if (score % 10 == 0 && score != 0 && tile->isEnable())
+		if (score % 2 == 0 && score != 0 && tile->isEnable())
 		{
 			int i = 0;
 			Abilities type;

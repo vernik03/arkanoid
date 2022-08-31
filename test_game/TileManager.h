@@ -205,10 +205,16 @@ public:
 					continue;
 				}
 				
-				if ((type != platform->getType() && type != platform->getBallType()) || i > 100)
+				if (type != platform->getType() && type != platform->getBallType())
 				{
 					break;
 				}
+
+
+				if (i > 100) {
+					break;
+				}
+					
 
 			} 
 			//while (type == platform->getType() || type == platform->getBallType() || i < 100);

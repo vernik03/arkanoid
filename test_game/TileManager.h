@@ -90,8 +90,8 @@ public:
 	}
 
 	bool canMoveBonus(Bonus* bonus_tile) {
-		for (auto& tile_vector : tiles) {
-			for (auto& tile : tile_vector) {
+		for (auto& tile_line : tiles) {
+			for (auto& tile : tile_line) {
 				if (tile->isEnable()) {
 					if (tile->getX() == bonus_tile->getX()) {
 						double dist = tile->getY() - (bonus_tile->getY() + bonus_tile->getHeight());

@@ -36,12 +36,26 @@ public:
 		timer = getTickCount();
 		is_in_game = 0;
 		ball = new Ball(x, y - height / 2);
+		extra_ball_1 = new Ball(x, y - height / 2);
+		extra_ball_2 = new Ball(x, y - height / 2);
+		extra_ball_1->setY(window_h + 200);
+		extra_ball_2->setY(window_h + 200);
 		catch_delay = 0;
+		bonus = Abilities::none;
 	}
 	~Platform() {};
 
 	void draw() override {
 		ball->draw();
+		if (ballIsAlive(extra_ball_1))
+		{
+			extra_ball_1->draw();
+		}
+		if (ballIsAlive(extra_ball_2))
+		{
+			extra_ball_2->draw();
+		}
+
 		if (getTickCount() - timer > 50)
 		{
 			timer = getTickCount();
@@ -104,6 +118,16 @@ public:
 		getSpriteSize(sprite_small, width, height);
 	}
 
+	void addBalls() {
+		extra_ball_1->setX(ball->getX());
+		extra_ball_1->setY(ball->getY());
+		extra_ball_2->setY(ball->getY());
+		extra_ball_2->setX(ball->getX());
+		
+		extra_ball_2->setSpeed(ball->getXSpeed() / 1.1, ball->getYSpeed() * 1.1);
+		extra_ball_1->setSpeed(ball->getXSpeed() * 1.1, ball->getYSpeed() / 1.1);
+		
+	}
 
 	void stopLeft() {
 		left_speed = 0;
@@ -114,14 +138,37 @@ public:
 	}
 
 	void moveBall() {
-		if (!is_in_game)
+		moveEveryBall(ball);
+		if (ballIsAlive(extra_ball_1))
 		{
-			ball->setX(x);
+			moveEveryBall(extra_ball_1);
+		}
+		if (ballIsAlive(extra_ball_2))
+		{
+			moveEveryBall(extra_ball_2);
+		}
+	}
+
+	bool ballIsAlive(Ball*& every_ball) {
+		return every_ball->getY() < window_h + 20;
+	}
+
+	bool allBallsIsAlive() {
+		return ballIsAlive(extra_ball_1) && ballIsAlive(extra_ball_2) && ballIsAlive(ball);
+	}
+
+	bool anyBallIsAlive() {
+		return ballIsAlive(extra_ball_1) || ballIsAlive(extra_ball_2);
+	}
+
+	void moveEveryBall(Ball*& every_ball) {
+		if(!is_in_game)
+		{
+			every_ball->setX(x);
 		}
 		else
 		{
-			
-			if (ball->move(window_w, width, height, x, y))
+			if (every_ball->move(window_w, width, height, x, y) && !anyBallIsAlive())
 			{
 				tryToCatch();
 			}
@@ -129,15 +176,42 @@ public:
 	}
 
 	bool checkBall() {
-		if (ball->getY() + ball->getHeight() / 2 >= window_h)
+		if (allBallsIsAlive())
 		{
-			return 1;
+			return 0;
 		}
+		else if (!ballIsAlive(ball))
+		{
+			if (ballIsAlive(extra_ball_1))
+			{
+				ball = std::move(extra_ball_1);
+				extra_ball_1->setY(window_h + 200);
+			}
+			else if (ballIsAlive(extra_ball_2))
+			{
+				ball = std::move(extra_ball_2);
+				extra_ball_2->setY(window_h + 200);
+			}
+			else
+			{
+				return 1;
+			}
+		} 
 		return 0;
 	}
 
 	bool checkCollision(Tile*& tile, int& score) {
-		return ball->checkCollision(tile, score);
+		int collision = 0;
+		collision += ball->checkCollision(tile, score);
+		if (ballIsAlive(extra_ball_1))
+		{
+			collision += extra_ball_1->checkCollision(tile, score);
+		}
+		if (ballIsAlive(extra_ball_2))
+		{
+			collision += extra_ball_2->checkCollision(tile, score);
+		}
+		return collision;
 	}
 
 	bool checkBonusColission(Bonus*& b, int& score) {
@@ -160,12 +234,21 @@ public:
 				setSmall();
 				break;
 			case Abilities::three:
+				addBalls();
+				break;
+			case Abilities::teleport:
+				teleportBall();
 				break;
 			default:
 				break;
 			}
 		}
 		return res;
+	}
+
+	void teleportBall() {
+		ball->setX(rand() % window_w);
+		ball->setY(rand() % (window_h / 2));
 	}
 
 	Abilities getType() {
@@ -207,6 +290,8 @@ private:
 	bool is_in_game;
 
 	Ball* ball;
+	Ball* extra_ball_1;
+	Ball* extra_ball_2;
 
 	unsigned int timer; 
 	

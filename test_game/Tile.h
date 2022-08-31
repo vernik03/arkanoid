@@ -183,7 +183,9 @@ enum class Abilities {
 	fast,
 	big,
 	small,
-	three
+	three,
+	teleport,
+	none
 };
 
 class Bonus : public Tile

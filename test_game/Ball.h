@@ -22,6 +22,7 @@ public:
 		y_speed = 0;
 		x_delay = 0;
 		y_delay = 0;
+		type = Abilities::none;
 	};
 
 	void draw() override {
@@ -43,7 +44,7 @@ public:
 			x_delay -= x_delay;
 		}
 
-		if ((y - radius < 0) ||
+		if ((y + radius < 0) ||
 			(((y + radius > p_y - h / 2) && (y - radius < p_y + h / 2))
 				&& (x - radius <= p_x + w / 2 - SAFE_ZONE) && (x + radius >= p_x - w / 2 + SAFE_ZONE)))
 		{
@@ -109,6 +110,16 @@ public:
 			param = speed / param;
 			y_speed *= param;
 			x_speed *= param;
+			if (type == Abilities::slow)
+			{
+				y_speed /= speed_num;
+				x_speed /= speed_num;
+			}
+			else if (type == Abilities::fast)
+			{
+				y_speed *= speed_num;
+				x_speed *= speed_num;
+			}
 			return 1;
 		}
 		return 0;
@@ -175,22 +186,37 @@ public:
 	void removeSpeed(double number) {
 		x_speed /= number;
 		y_speed /= number;
-		speed /= number;
+		speed /= 2 * number;
+		speed_num = number;
 		type = Abilities::slow;
 	}
 
 	void addSpeed(double number) {
 		x_speed *= number;
 		y_speed *= number;
-		speed *= number;
+		speed *= 2 * number;
+		speed_num = number;
 		type = Abilities::fast;
 	}
 
+	void setSpeed(double x, double y) {
+		x_speed = x;
+		y_speed = y;
+	}
+	
+	double getXSpeed() {
+		return x_speed;
+	}
+	
+	double getYSpeed() {
+		return y_speed;
+	}
 
 private:
 	double x_speed;
 	double y_speed;
-	double speed = 2;
+	double speed = 1.7;
+	double speed_num;
 
 	double radius;
 

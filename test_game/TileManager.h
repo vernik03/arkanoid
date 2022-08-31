@@ -165,7 +165,10 @@ public:
 					{
 						checkScore(tiles[i][j], score, platform);
 					}
-					return 1;
+					if (!platform->anyBallIsAlive())
+					{
+						return 1;
+					}
 				}
 			}
 		}
@@ -180,15 +183,27 @@ public:
 	}
 	
 	bool checkScore(Tile*& tile, int& score, std::unique_ptr<Platform>& platform) {
-		if (score % 2 == 0 && score != 0 && tile->isEnable())
+		if (score % 10 == 0 && score != 0 && tile->isEnable())
 		{
 			int i = 0;
 			Abilities type;
-			do {
-				type = static_cast<Abilities>(rand() % 4);
+			while (true) {
+				type = static_cast<Abilities>(rand() % 6);
+				std::cout << static_cast<int>(platform->getBallType()) + 1 << " ";
 				i++;
 
-			} while (type == platform->getType() || type == platform->getBallType() || i < 10);
+				if ((type == Abilities::three || type == Abilities::teleport) && platform->anyBallIsAlive())
+				{
+					continue;
+				}
+				
+				if ((type != platform->getType() && type != platform->getBallType()) || i > 100)
+				{
+					break;
+				}
+
+			} 
+			//while (type == platform->getType() || type == platform->getBallType() || i < 100);
 			
 			Bonus* new_tile = new Bonus(type,
 				tile->getWidth(), tile->getHeight(),
